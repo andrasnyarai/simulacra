@@ -1,12 +1,5 @@
-## Copy template
+# Simulacra
 
-```console
-npx tiged mattrossman/r3f-vite
-```
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4771fc73-83e6-4f9d-bc66-c35f12511d44/deploy-status)](https://app.netlify.com/sites/comforting-yeot-16f793/deploys)
 
-## Setup and run
-
-```console
-yarn
-yarn dev
-```
+[live](https://comforting-yeot-16f793.netlify.app)
