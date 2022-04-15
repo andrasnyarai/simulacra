@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
-import { useFrame } from '@react-three/fiber'
-import { Sphere, Trail } from '@react-three/drei'
+import React, { useState, useEffect } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
+import { Sphere, Trail, MeshDistortMaterial } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
 import { useSpring, animated } from '@react-spring/three'
+import { useDrag } from '@use-gesture/react'
 
 import { useKeyPress } from '../utils'
 import { FLOOR_GROUP, PLAYER_GROUP } from '../groups'
@@ -40,32 +41,63 @@ export function Player(props) {
     },
   }))
 
-  const up = useKeyPress('w')
-  const down = useKeyPress('s')
-  const left = useKeyPress('a')
-  const right = useKeyPress('d')
+  useDrag(
+    ({ movement: [x, y] }) => {
+      api.velocity.set(x * 0.05, 0, y * 0.05)
+    },
+    { target: document.getElementById('root') }
+  )
+
+  const { camera } = useThree()
+
+  useEffect(() => {
+    const unsubscribe = api.position.subscribe(([x, , z]) => {
+      camera.position.x = x
+      camera.position.z = z
+    })
+
+    if (!alive) {
+      unsubscribe()
+    }
+
+    return unsubscribe
+  }, [alive])
+
+  const wHandler = useKeyPress('w')
+  const sHandler = useKeyPress('s')
+  const aHandler = useKeyPress('a')
+  const dHandler = useKeyPress('d')
+
+  const arrowUpHandler = useKeyPress('ArrowUp')
+  const arrowDownHandler = useKeyPress('ArrowDown')
+  const arrowLeftHandler = useKeyPress('ArrowLeft')
+  const arrowRightHandler = useKeyPress('ArrowRight')
 
   useFrame(() => {
+    const up = wHandler.current || arrowUpHandler.current
+    const down = sHandler.current || arrowDownHandler.current
+    const left = aHandler.current || arrowLeftHandler.current
+    const right = dHandler.current || arrowRightHandler.current
     let velocity = 30
 
-    if (up.current && (right.current || left.current)) {
+    if (up && (right || left)) {
       velocity = velocity / Math.sqrt(2)
     }
 
-    if (down.current && (right.current || left.current)) {
+    if (down && (right || left)) {
       velocity = velocity / Math.sqrt(2)
     }
 
-    if (up.current) {
+    if (up) {
       api.applyForce([0, 0, -velocity], [0, 0, 0])
     }
-    if (down.current) {
+    if (down) {
       api.applyForce([0, 0, velocity], [0, 0, 0])
     }
-    if (left.current) {
+    if (left) {
       api.applyForce([-velocity, 0, 0], [0, 0, 0])
     }
-    if (right.current) {
+    if (right) {
       api.applyForce([velocity, 0, 0], [0, 0, 0])
     }
   })
@@ -84,7 +116,7 @@ export function Player(props) {
     >
       <group ref={ref} uuid="player" dispose={null}>
         <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
-          <meshBasicMaterial color="white" />
+          <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
         </AnimatedSphere>
         <pointLight
           intensity={lightIntensity}

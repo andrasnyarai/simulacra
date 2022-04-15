@@ -8,8 +8,13 @@ export function Obstacle(props) {
   const [ref, api] = useBox(() => ({ args: [1, 1, 1], mass: 0.3, collisionFilterGroup: OBSTACLE_GROUP, ...props }))
 
   return (
-    <Box args={[1]} ref={ref} castShadow receiveShadow>
-      <meshPhongMaterial color="#2326d4" emissive="#030450" shininess={1} />
-    </Box>
+    <group ref={ref}>
+      <Box args={[1, 1, 1]} castShadow receiveShadow>
+        <meshPhongMaterial transparent opacity={0.7} color="#2326d4" emissive="#030450" shininess={1} />
+      </Box>
+      <Box args={[0.75, 0.75, 0.75]} castShadow receiveShadow>
+        <meshStandardMaterial wireframe wireframeLinewidth={10} color="#02022d" />
+      </Box>
+    </group>
   )
 }

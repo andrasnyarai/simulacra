@@ -5,8 +5,8 @@ import { useBox } from '@react-three/cannon'
 import { planeMaterial } from '../materials'
 import { FLOOR_GROUP } from '../groups'
 
-function Plane({ args, color, ...props }) {
-  const [ref] = useBox(() => ({ args, ...props, material: planeMaterial, collisionFilterGroup: FLOOR_GROUP }))
+function Plane({ args, color, cannonArgs, ...props }) {
+  const [ref] = useBox(() => ({ args: cannonArgs || args, ...props, material: planeMaterial, collisionFilterGroup: FLOOR_GROUP }))
 
   return (
     <Box args={args} ref={ref} castShadow receiveShadow>
@@ -37,10 +37,34 @@ export function Terrain({ mapWidth, mapHeight }) {
       </mesh>
       <Plane color="lightgreen" position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} args={[mapWidth, mapHeight, 0.1]} />
 
-      <Plane color="lightgreen" position={[0, 0.5, -mapHeight / 2]} rotation={[0, 0, 0]} args={[mapWidth, 1, 0.1]} />
-      <Plane color="lightgreen" position={[0, 0.5, mapHeight / 2]} rotation={[0, 0, 0]} args={[mapWidth, 1, 0.1]} />
-      <Plane color="lightgreen" position={[-mapWidth / 2, 0.5, 0]} rotation={[0, -Math.PI / 2, 0]} args={[mapHeight, 1, 0.1]} />
-      <Plane color="lightgreen" position={[mapWidth / 2, 0.5, 0]} rotation={[0, -Math.PI / 2, 0]} args={[mapHeight, 1, 0.1]} />
+      <Plane
+        color="lightgreen"
+        position={[0, 0.5, -mapHeight / 2]}
+        rotation={[0, 0, 0]}
+        args={[mapWidth, 1, 0.1]}
+        cannonArgs={[mapWidth, 15, 1]}
+      />
+      <Plane
+        color="lightgreen"
+        position={[0, 0.5, mapHeight / 2]}
+        rotation={[0, 0, 0]}
+        args={[mapWidth, 1, 0.1]}
+        cannonArgs={[mapWidth, 15, 1]}
+      />
+      <Plane
+        color="lightgreen"
+        position={[-mapWidth / 2, 0.5, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
+        args={[mapHeight, 1, 0.1]}
+        cannonArgs={[mapHeight, 15, 1]}
+      />
+      <Plane
+        color="lightgreen"
+        position={[mapWidth / 2, 0.5, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
+        args={[mapHeight, 1, 0.1]}
+        cannonArgs={[mapHeight, 15, 1]}
+      />
     </>
   )
 }
