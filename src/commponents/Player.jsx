@@ -80,10 +80,7 @@ export function Player(props) {
       stride={0}
       interval={1}
       target={undefined}
-      attenuation={(width) => {
-        console.log(width)
-        return width
-      }}
+      attenuation={(width) => width}
     >
       <group ref={ref} uuid="player" dispose={null}>
         <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
