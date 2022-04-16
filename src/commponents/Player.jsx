@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Sphere, Trail, MeshDistortMaterial } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
 import { useSpring, animated } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
 
-import { useKeyPress } from '../utils'
+import { lerp, useKeyPress } from '../utils'
 import { FLOOR_GROUP, PLAYER_GROUP } from '../groups'
 import { playerMaterial } from '../materials'
 
@@ -115,7 +115,7 @@ export function Player(props) {
       <animated.ambientLight intensity={intensity} color="white" />
       <Trail
         width={3}
-        color={'white'}
+        color="white"
         length={2}
         decay={1}
         local={false}

@@ -27,7 +27,7 @@ export function Terrain({ mapWidth, mapHeight }) {
   const wallCannonThickness = 5
   return (
     <>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+      {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[mapWidth, mapHeight]} />
         <MeshReflectorMaterial
           blur={[300, 100]}
@@ -43,7 +43,7 @@ export function Terrain({ mapWidth, mapHeight }) {
           transparent
           opacity={0.5}
         />
-      </mesh>
+      </mesh> */}
       <Plane color="lightgreen" position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} args={[mapWidth, mapHeight, 0.1]} />
 
       <Plane

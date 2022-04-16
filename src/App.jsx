@@ -14,25 +14,26 @@ import { Terrain } from './commponents/Terrain'
 import { Effects } from './commponents/Effects'
 
 // user select none to everything
+
+// invincible spawn somehow?
+//  if mobile no FLoorReflection
+// game end logic (death/black hole gate)
+// levels
+// 3 lifes
+// sounds
+// pacman powerup -> life
+// some ui starcount etc...
 // useloader for game start
-// -----
+
 // specify colors
 // add domain
 // create svg favicon
-// some ui starcount etc...
 // og pictures !
-// extend api with removebody
-
-// game end logic (death/black hole gate)
-// different levels
-// sounds
-
-// invincible spawn
-// 3 lifes
-// pacman powerup -> life
 
 // menu
 // leaderboard
+
+// extend api with removebody
 
 const starCount = 30
 const obstacleCount = 10
