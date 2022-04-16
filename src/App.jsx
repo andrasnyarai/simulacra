@@ -14,25 +14,6 @@ import { Player } from './commponents/Player'
 import { Terrain } from './commponents/Terrain'
 import { Effects } from './commponents/Effects'
 
-// user select none to everything
-// add context black hole only visible when done
-// end game level
-// levels -- differ size enemycount starcount color
-// disable history back
-// messenger browser contain overtouch scroll
-
-// 3 lifes
-// powerup pacman +1 life
-// sounds
-// useloader for game start
-// specify colors
-// add domain
-// create svg favicon
-// og pictures !
-// menu
-// leaderboard -> highscoard based on time
-// extend api with removebody
-
 const mapWidth = 30
 const mapHeight = 30
 
