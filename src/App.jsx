@@ -5,17 +5,16 @@ import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
 
 import { enemyMaterial, planeMaterial, playerMaterial } from './materials'
 import { lerp } from './utils'
-import { Enemy } from './commponents/Enemy'
+import { WanderEnemy } from './commponents/WanderEnemy'
+import { HunterEnemy } from './commponents/HunterEnemy'
 import { Star } from './commponents/Star'
 import { Obstacle } from './commponents/Obstacle'
 import { Player } from './commponents/Player'
 import { Terrain } from './commponents/Terrain'
+import { Effects } from './commponents/Effects'
 
-// player can leave map ???
-// fix terrain walls cannon-three parity
-// create debug mode
-
-// fine tune controls
+// user select none to everything
+// useloader for game start
 // -----
 // specify colors
 // add domain
@@ -27,19 +26,21 @@ import { Terrain } from './commponents/Terrain'
 // game end logic (death/black hole gate)
 // different levels
 // sounds
-// effects
-// load textures
 
 // invincible spawn
-// life damage
+// 3 lifes
 // pacman powerup -> life
 
-// purple enemy attracts you
-// Orb enemy spawns little ones
+// menu
+// leaderboard
 
 const starCount = 30
 const obstacleCount = 10
-const enemyCount = 3
+const wanderEnemyCount = 3
+const hunterEnemyCount = 2
+
+const mapWidth = 30
+const mapHeight = 30
 
 function calculateStartingPosition(mapWidth, mapHeight) {
   const offset = 2.5
@@ -58,13 +59,9 @@ function ContactMaterials() {
 }
 
 export default function App() {
-  const mapWidth = 30
-  const mapHeight = 15
-
   return (
     <Canvas camera={{ fov: 25, position: [0, 45, 0] }} shadows colorManagement onCreated={(state) => state.gl.setClearColor('black')}>
       <Stars />
-      <ambientLight intensity={0.05} color="white" />
       {/* <OrbitControls /> */}
 
       <Physics gravity={[0, -10, 0]}>
@@ -82,14 +79,23 @@ export default function App() {
           return <Obstacle key={`obstacle-${i}`} position={[x, 0.5, z]} />
         })}
 
-        {[...new Array(enemyCount)].map((_, i) => {
+        {[...new Array(wanderEnemyCount)].map((_, i) => {
           const { x, z } = calculateStartingPosition(mapWidth, mapHeight)
-          const uuid = `enemy-${i}`
-          return <Enemy key={uuid} position={[x, 2, z]} uuid={uuid} />
+          const uuid = `wander-enemy-${i}`
+          return <WanderEnemy key={uuid} position={[x, 2, z]} uuid={uuid} />
         })}
+
+        {[...new Array(hunterEnemyCount)].map((_, i) => {
+          const { x, z } = calculateStartingPosition(mapWidth, mapHeight)
+          const uuid = `hunter-enemy-${i}`
+          const fieldUuid = `hunter-field-${i}`
+          return <HunterEnemy key={uuid} position={[x, 2, z]} uuid={uuid} fieldUuid={fieldUuid} />
+        })}
+
         <Player position={[0, 1, 0]} />
         {/* </Debug> */}
       </Physics>
+      <Effects />
     </Canvas>
   )
 }

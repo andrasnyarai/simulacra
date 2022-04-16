@@ -13,8 +13,8 @@ const AnimatedSphere = animated(Sphere)
 
 export function Player(props) {
   const [alive, setAlive] = useState(true)
-  const [lightIntensity, setLightIntensity] = useState(0.1)
-  const { scale } = useSpring({ scale: alive ? 1 : 0.1 })
+  const [lightIntensity, setLightIntensity] = useState(0.3)
+  const { scale, intensity } = useSpring({ scale: alive ? 1 : 0.1, intensity: alive ? 0.05 : 1 })
 
   const [ref, api] = useSphere(() => ({
     args: [0.5],
@@ -43,7 +43,11 @@ export function Player(props) {
 
   useDrag(
     ({ movement: [x, y] }) => {
-      api.velocity.set(x * 0.05, 0, y * 0.05)
+      if (!alive) {
+        return
+      }
+
+      api.velocity.set(x * 0.05, -1, y * 0.05)
     },
     { target: document.getElementById('root') }
   )
@@ -51,8 +55,9 @@ export function Player(props) {
   const { camera } = useThree()
 
   useEffect(() => {
-    const unsubscribe = api.position.subscribe(([x, , z]) => {
+    const unsubscribe = api.position.subscribe(([x, y, z]) => {
       camera.position.x = x
+      camera.position.y = y + 45
       camera.position.z = z
     })
 
@@ -74,11 +79,14 @@ export function Player(props) {
   const arrowRightHandler = useKeyPress('ArrowRight')
 
   useFrame(() => {
+    if (!alive) {
+      return
+    }
     const up = wHandler.current || arrowUpHandler.current
     const down = sHandler.current || arrowDownHandler.current
     const left = aHandler.current || arrowLeftHandler.current
     const right = dHandler.current || arrowRightHandler.current
-    let velocity = 30
+    let velocity = 90
 
     if (up && (right || left)) {
       velocity = velocity / Math.sqrt(2)
@@ -103,30 +111,33 @@ export function Player(props) {
   })
 
   return (
-    <Trail
-      width={3}
-      color={'white'}
-      length={2}
-      decay={1}
-      local={false}
-      stride={0}
-      interval={1}
-      target={undefined}
-      attenuation={(width) => width}
-    >
-      <group ref={ref} uuid="player" dispose={null}>
-        <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
-          <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
-        </AnimatedSphere>
-        <pointLight
-          intensity={lightIntensity}
-          castShadow
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-          distance={lightIntensity * 100}
-          decay={lightIntensity * 10}
-        />
-      </group>
-    </Trail>
+    <>
+      <animated.ambientLight intensity={intensity} color="white" />
+      <Trail
+        width={3}
+        color={'white'}
+        length={2}
+        decay={1}
+        local={false}
+        stride={0}
+        interval={1}
+        target={undefined}
+        attenuation={(width) => width}
+      >
+        <group ref={ref} uuid="player" dispose={null}>
+          <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
+            <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
+          </AnimatedSphere>
+          <pointLight
+            intensity={lightIntensity}
+            castShadow
+            shadow-mapSize-height={512}
+            shadow-mapSize-width={512}
+            distance={lightIntensity * 100}
+            decay={lightIntensity * 10}
+          />
+        </group>
+      </Trail>
+    </>
   )
 }

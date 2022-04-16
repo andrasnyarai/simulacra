@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react'
-import { useSphere } from '@react-three/cannon'
+import React from 'react'
+import { useFrame } from '@react-three/fiber'
 import { MeshWobbleMaterial, Sphere } from '@react-three/drei'
+import { useSphere } from '@react-three/cannon'
 
 import { ENEMY_GROUP } from '../groups'
 import { lerp } from '../utils'
 import { enemyMaterial } from '../materials'
 
-export function Enemy(props) {
+export function WanderEnemy(props) {
   const [ref, api] = useSphere(() => ({
     args: [0.4],
     mass: 1,
@@ -15,10 +16,12 @@ export function Enemy(props) {
     collisionFilterGroup: ENEMY_GROUP,
   }))
 
-  useEffect(() => {
-    api.applyTorque([lerp(Math.random(), -50, 50), lerp(Math.random(), -50, 50), lerp(Math.random(), -50, 50)])
-    api.velocity.set(lerp(Math.random(), -15, 15), 0, lerp(Math.random(), -15, 15))
-  }, [])
+  useFrame(({ clock }) => {
+    if (clock.elapsedTime % Math.random() < 0.01) {
+      api.applyTorque([lerp(Math.random(), -20, 20), lerp(Math.random(), -20, 20), lerp(Math.random(), -20, 20)])
+      api.velocity.set(lerp(Math.random(), -7, 7), 0, lerp(Math.random(), -7, 7))
+    }
+  })
 
   return (
     <group ref={ref} dispose={null} uuid={props.uuid}>
@@ -28,7 +31,6 @@ export function Enemy(props) {
           position={[-0.75, 0, 0]}
           intensity={1}
           color="red"
-          castShadow
           shadow-mapSize-height={512}
           shadow-mapSize-width={512}
           distance={2}
@@ -38,7 +40,6 @@ export function Enemy(props) {
           position={[0.75, 0, 0]}
           intensity={1}
           color="red"
-          castShadow
           shadow-mapSize-height={512}
           shadow-mapSize-width={512}
           distance={2}

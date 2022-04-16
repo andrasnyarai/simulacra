@@ -39,7 +39,7 @@ export function Star(props) {
 
   return (
     <AnimatedSphere args={[0.4]} ref={ref} dispose={null} scale={scale} castShadow receiveShadow uuid={props.uuid}>
-      <animated.meshPhongMaterial shininess={100} emissive={color} specular="pink" />
+      <animated.meshPhongMaterial shininess={100} emissive={color} />
     </AnimatedSphere>
   )
 }
