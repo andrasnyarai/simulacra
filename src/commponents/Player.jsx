@@ -51,7 +51,7 @@ export function Player(props) {
 
       api.velocity.set(x * modifier, -1, y * modifier)
     },
-    { target: document.getElementById('root'), eventOptions: { capture: true } }
+    { target: document.getElementById('root') }
   )
 
   const { camera } = useThree()
