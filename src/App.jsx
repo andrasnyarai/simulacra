@@ -15,7 +15,6 @@ import { Effects } from './commponents/Effects'
 
 // user select none to everything
 
-// invincible spawn somehow?
 //  if mobile no FLoorReflection
 // game end logic (death/black hole gate)
 // levels
@@ -43,12 +42,17 @@ const hunterEnemyCount = 2
 const mapWidth = 30
 const mapHeight = 30
 
-function calculateStartingPosition(mapWidth, mapHeight) {
+function calculateStartingPosition(mapWidth, mapHeight, startOffset) {
   const offset = 2.5
   const width = mapWidth - offset
   const height = mapHeight - offset
-  const x = lerp(Math.random(), -width / 2, width / 2)
-  const z = lerp(Math.random(), -height / 2, height / 2)
+  let x = lerp(Math.random(), -width / 2, width / 2)
+  let z = lerp(Math.random(), -height / 2, height / 2)
+
+  while (-startOffset < x && x < startOffset && -startOffset < z && z < startOffset) {
+    x = lerp(Math.random(), -width / 2, width / 2)
+  }
+
   return { x, z }
 }
 
@@ -71,23 +75,24 @@ export default function App() {
         <Terrain mapWidth={mapWidth} mapHeight={mapHeight} />
 
         {[...new Array(starCount)].map((_, i) => {
-          const { x, z } = calculateStartingPosition(mapWidth, mapHeight)
+          const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
           return <Star key={`star-${i}`} position={[x, 3, z]} uuid={`star-${i}`} />
         })}
 
         {[...new Array(obstacleCount)].map((_, i) => {
-          const { x, z } = calculateStartingPosition(mapWidth, mapHeight)
+          const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 3)
           return <Obstacle key={`obstacle-${i}`} position={[x, 0.5, z]} />
         })}
 
         {[...new Array(wanderEnemyCount)].map((_, i) => {
-          const { x, z } = calculateStartingPosition(mapWidth, mapHeight)
+          const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 5)
           const uuid = `wander-enemy-${i}`
+
           return <WanderEnemy key={uuid} position={[x, 2, z]} uuid={uuid} />
         })}
 
         {[...new Array(hunterEnemyCount)].map((_, i) => {
-          const { x, z } = calculateStartingPosition(mapWidth, mapHeight)
+          const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 6)
           const uuid = `hunter-enemy-${i}`
           const fieldUuid = `hunter-field-${i}`
           return <HunterEnemy key={uuid} position={[x, 2, z]} uuid={uuid} fieldUuid={fieldUuid} />
