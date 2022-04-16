@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { MeshDistortMaterial, Sphere } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
 import { useSpring, animated } from '@react-spring/three'
 
-import { BLACK_HOLE_GROUP } from '../groups'
+import { BLACK_HOLE_GROUP, FLOOR_GROUP, PLAYER_GROUP } from '../groups'
 
 const AnimatedSphere = animated(Sphere)
 
@@ -18,7 +18,14 @@ export function BlackHole({ isOpen, ...props }) {
     mass: 30,
     ...props,
     collisionFilterGroup: BLACK_HOLE_GROUP,
+    collisionFilterMask: FLOOR_GROUP,
   }))
+
+  useEffect(() => {
+    if (isOpen) {
+      api.collisionFilterMask.set(FLOOR_GROUP | PLAYER_GROUP)
+    }
+  }, [isOpen])
 
   return (
     <group ref={ref} dispose={null} uuid={props.uuid}>

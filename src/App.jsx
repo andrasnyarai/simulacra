@@ -1,21 +1,19 @@
 import React from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Stars } from '@react-three/drei'
+import { OrbitControls, Stars as StarsBackground } from '@react-three/drei'
 import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
 
 import { enemyMaterial, planeMaterial, playerMaterial } from './materials'
-import { STAR_COUNT, OBSTACLE_COUNT, WANDER_ENEMY_COUNT, HUNTER_ENEMY_COUNT } from './mapConstants'
 import { lerp } from './utils'
 import { WanderEnemy } from './commponents/WanderEnemy'
 import { HunterEnemy } from './commponents/HunterEnemy'
+import { BlackHole } from './commponents/BlackHole'
 import { Star } from './commponents/Star'
 import { Obstacle } from './commponents/Obstacle'
 import { Player } from './commponents/Player'
 import { Terrain } from './commponents/Terrain'
 import { Effects } from './commponents/Effects'
-
-const mapWidth = 30
-const mapHeight = 30
+import { useStore } from './useStore'
 
 function calculateStartingPosition(mapWidth, mapHeight, startOffset) {
   const offset = 2.5
@@ -38,42 +36,96 @@ function ContactMaterials() {
   return null
 }
 
+const Stars = React.memo(({ mapWidth, mapHeight, level, count }) => {
+  return (
+    <>
+      {[...new Array(count)].map((_, i) => {
+        console.log('star lefut')
+        const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
+        console.log('ez is lefut')
+        return <Star key={`star-${i}-${level}`} position={[x, 3, z]} uuid={`star-${i}-${level}`} />
+      })}
+    </>
+  )
+})
+
+const Obstacles = React.memo(({ mapWidth, mapHeight, level, count }) => {
+  return (
+    <>
+      {[...new Array(count)].map((_, i) => {
+        console.log('obstacle lefut')
+        const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 3)
+        const size = lerp(Math.random(), 1, 3)
+        console.log('lefut')
+        return <Obstacle key={`obstacle-${i}-${level}`} position={[x, size, z]} uuid={`obstacle-${i}-${level}`} size={size} />
+      })}
+    </>
+  )
+})
+
+const WanderEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
+  return (
+    <>
+      {[...new Array(count)].map((_, i) => {
+        console.log('wander lefut')
+        const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 5)
+        const uuid = `wander-enemy-${i}-${level}`
+
+        return <WanderEnemy key={uuid} position={[x, 2, z]} uuid={uuid} />
+      })}
+    </>
+  )
+})
+
+const HunterEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
+  return (
+    <>
+      {[...new Array(count)].map((_, i) => {
+        console.log('hunter lefut')
+        const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 6)
+        const uuid = `hunter-enemy-${i}-${level}`
+        const fieldUuid = `hunter-field-${i}-${level}`
+        return <HunterEnemy key={uuid} position={[x, 2, z]} uuid={uuid} fieldUuid={fieldUuid} />
+      })}
+    </>
+  )
+})
+
 export default function App() {
+  const {
+    level,
+    collectedStars,
+    isGateOpen,
+    levelColor,
+    mapWidth,
+    mapHeight,
+    starCount,
+    obstacleCount,
+    wanderEnemyCount,
+    hunterEnemyCount,
+    loadnNextLevel,
+  } = useStore((state) => state)
+
   return (
     <Canvas camera={{ fov: 25, position: [0, 45, 0] }} shadows colorManagement onCreated={(state) => state.gl.setClearColor('black')}>
-      <Stars />
+      <StarsBackground />
       {/* <OrbitControls /> */}
 
       <Physics gravity={[0, -10, 0]}>
         {/* <Debug scale={1.1}> */}
         <ContactMaterials />
-        <Terrain mapWidth={mapWidth} mapHeight={mapHeight} />
+        <scene key={level}>
+          <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} />
 
-        {[...new Array(STAR_COUNT)].map((_, i) => {
-          const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
-          return <Star key={`star-${i}`} position={[x, 3, z]} uuid={`star-${i}`} />
-        })}
+          <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
+          <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
 
-        {[...new Array(OBSTACLE_COUNT)].map((_, i) => {
-          const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 3)
-          return <Obstacle key={`obstacle-${i}`} position={[x, 0.5, z]} />
-        })}
+          <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
+          <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
 
-        {[...new Array(WANDER_ENEMY_COUNT)].map((_, i) => {
-          const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 5)
-          const uuid = `wander-enemy-${i}`
-
-          return <WanderEnemy key={uuid} position={[x, 2, z]} uuid={uuid} />
-        })}
-
-        {[...new Array(HUNTER_ENEMY_COUNT)].map((_, i) => {
-          const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 6)
-          const uuid = `hunter-enemy-${i}`
-          const fieldUuid = `hunter-field-${i}`
-          return <HunterEnemy key={uuid} position={[x, 2, z]} uuid={uuid} fieldUuid={fieldUuid} />
-        })}
-
-        <Player position={[0, 1, 0]} />
+          <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
+          <Player position={[0, 1, 0]} uuid={`player`} />
+        </scene>
         {/* </Debug> */}
       </Physics>
       <Effects />

@@ -21,14 +21,14 @@ export function Star(props) {
     ...props,
     allowSleep: true,
     collisionFilterGroup: STAR_GROUP,
-    onCollide: (stuff) => {
-      if (stuff.contact.bj.uuid === 'player') {
+    onCollide: ({ contact }) => {
+      if (contact.bj.uuid.includes('player')) {
         setCollected(true)
 
         api.collisionFilterMask.set(FLOOR_GROUP)
         api.collisionFilterGroup.set(COLLECTED_STAR_GROUP)
         api.applyForce(
-          stuff.contact.ni.map((n) => n / 500),
+          contact.ni.map((n) => n / 500),
           [0, 0, 0]
         )
 

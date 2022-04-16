@@ -22,15 +22,15 @@ function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, ..
   )
 }
 
-export function Terrain({ mapWidth, mapHeight }) {
+export function Terrain({ mapWidth, mapHeight, color }) {
   const wallThreeThickness = 0.1
   const wallCannonThickness = 5
   return (
     <>
-      <Plane color="lightgreen" position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} args={[mapWidth, mapHeight, 0.1]} />
+      <Plane color={color} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} args={[mapWidth, mapHeight, 0.1]} />
 
       <Plane
-        color="lightgreen"
+        color={color}
         position={[0, 0.5, -mapHeight / 2]}
         cannonPosition={[0, 0.5, -mapHeight / 2 - wallCannonThickness / 2 + wallThreeThickness / 2]}
         rotation={[0, 0, 0]}
@@ -38,7 +38,7 @@ export function Terrain({ mapWidth, mapHeight }) {
         cannonArgs={[mapWidth + wallCannonThickness, 15, wallCannonThickness]}
       />
       <Plane
-        color="lightgreen"
+        color={color}
         position={[0, 0.5, mapHeight / 2]}
         cannonPosition={[0, 0.5, mapHeight / 2 + wallCannonThickness / 2 - wallThreeThickness / 2]}
         rotation={[0, 0, 0]}
@@ -46,7 +46,7 @@ export function Terrain({ mapWidth, mapHeight }) {
         cannonArgs={[mapWidth + wallCannonThickness, 15, wallCannonThickness]}
       />
       <Plane
-        color="lightgreen"
+        color={color}
         position={[-mapWidth / 2, 0.5, 0]}
         cannonPosition={[-mapWidth / 2 - wallCannonThickness / 2 + wallThreeThickness / 2, 0.5, 0]}
         rotation={[0, -Math.PI / 2, 0]}
@@ -54,7 +54,7 @@ export function Terrain({ mapWidth, mapHeight }) {
         cannonArgs={[mapHeight + wallCannonThickness, 15, wallCannonThickness]}
       />
       <Plane
-        color="lightgreen"
+        color={color}
         position={[mapWidth / 2, 0.5, 0]}
         cannonPosition={[mapWidth / 2 + wallCannonThickness / 2 - wallThreeThickness / 2, 0.5, 0]}
         rotation={[0, -Math.PI / 2, 0]}

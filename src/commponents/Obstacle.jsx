@@ -6,8 +6,7 @@ import { useBox } from '@react-three/cannon'
 import { OBSTACLE_GROUP } from '../groups'
 import { lerp, map } from '../utils'
 
-export function Obstacle(props) {
-  const size = lerp(Math.random(), 1, 3)
+export function Obstacle({ size, ...props }) {
   const [ref, api] = useBox(() => ({
     args: [size, size, size],
     mass: map(size, [1, 3], [0.1, 50]),
@@ -23,11 +22,10 @@ export function Obstacle(props) {
 
   useFrame(({ clock }) => {
     lightRef.current.distance = map(Math.sin(clock.getElapsedTime() + size), [-1, 1], [0.5, size * 0.75])
-    // lightRef.current.distance = Math.sin(clock.getElapsedTime() * 0.001 + size) * 10
   })
 
   return (
-    <group ref={ref}>
+    <group ref={ref} uuid={props.uuid}>
       <Box args={[size, size, size]} castShadow receiveShadow>
         <meshPhongMaterial transparent opacity={0.3} color="#2326d4" emissive="#030450" shininess={1} />
       </Box>

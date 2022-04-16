@@ -25,7 +25,7 @@ export function HunterEnemy(props) {
     mass: 0,
     ...props,
     onCollide: ({ contact }) => {
-      if (contact.bj.uuid === 'player') {
+      if (contact.bj.uuid.includes('player')) {
         setIsAttacking(true)
         api.velocity.set(...contact.ni.map((n) => n * 8))
 
@@ -36,7 +36,7 @@ export function HunterEnemy(props) {
 
   useFrame(({ clock }) => {
     if (clock.elapsedTime % Math.random() < 0.005 && !isAttacking) {
-      api.velocity.set(lerp(Math.random(), -15, 15), 0, lerp(Math.random(), -15, 15))
+      api.velocity.set(lerp(Math.random(), -10, 10), 0, lerp(Math.random(), -10, 10))
     }
   })
 

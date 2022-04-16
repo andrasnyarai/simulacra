@@ -8,10 +8,12 @@ import { useDrag } from '@use-gesture/react'
 import { isMobile, useKeyPress } from '../utils'
 import { FLOOR_GROUP, PLAYER_GROUP } from '../groups'
 import { playerMaterial } from '../materials'
+import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
 export function Player(props) {
+  const { collectStar, loadnNextLevel } = useStore((state) => state)
   const [alive, setAlive] = useState(true)
   const [lightIntensity, setLightIntensity] = useState(0.3)
   const { scale, intensity } = useSpring({ scale: alive ? 1 : 0.1, intensity: alive ? 0.05 : 1 })
@@ -25,18 +27,20 @@ export function Player(props) {
     onCollide: ({ contact }) => {
       if (contact.bi.uuid.includes('enemy')) {
         setAlive(false)
-
         api.collisionFilterMask.set(FLOOR_GROUP)
-        api.applyForce(
-          contact.ni.map((n) => n * -1),
-          [0, 0, 0]
-        )
-
         setTimeout(() => api.collisionFilterMask.set(null), 200)
+      }
+
+      if (contact.bi.uuid.includes('black-hole')) {
+        setAlive(false)
+        api.collisionFilterMask.set(null)
+        api.velocity.set(0, -1, 0)
+        setTimeout(() => loadnNextLevel(), 500)
       }
 
       if (contact.bi.uuid.includes('star')) {
         setLightIntensity((intensity) => intensity + 0.05)
+        collectStar()
       }
     },
   }))
@@ -126,7 +130,7 @@ export function Player(props) {
         target={undefined}
         attenuation={(width) => width}
       >
-        <group ref={ref} uuid="player" dispose={null}>
+        <group ref={ref} uuid={props.uuid} dispose={null}>
           <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
             <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
           </AnimatedSphere>
