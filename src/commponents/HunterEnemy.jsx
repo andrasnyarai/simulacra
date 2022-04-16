@@ -10,7 +10,7 @@ import { enemyMaterial } from '../materials'
 
 export function HunterEnemy(props) {
   const [isAttacking, setIsAttacking] = useState(false)
-  const { intensity } = useSpring({ intensity: isAttacking ? 15 : 1 })
+  const { intensity } = useSpring({ intensity: isAttacking ? 15 : 5 })
   const [ref, api] = useSphere(() => ({
     args: [0.6],
     mass: 3,
@@ -20,14 +20,14 @@ export function HunterEnemy(props) {
   }))
 
   const [fieldRef, fieldApi] = useSphere(() => ({
-    args: [5],
+    args: [4],
     isTrigger: true,
     mass: 0,
     ...props,
     onCollide: ({ contact }) => {
       if (contact.bj.uuid === 'player') {
         setIsAttacking(true)
-        api.velocity.set(...contact.ni.map((n) => n * 10))
+        api.velocity.set(...contact.ni.map((n) => n * 8))
 
         setTimeout(() => setIsAttacking(false), 500)
       }

@@ -1,5 +1,9 @@
 import { useRef, useEffect } from 'react'
 
+export function isMobile() {
+  return /(iPhone|iPod|iPad|Android|BlackBerry)/gi.test(window.navigator.userAgent)
+}
+
 export function lerp(alpha, min, max) {
   return min * (1 - alpha) + max * alpha
 }

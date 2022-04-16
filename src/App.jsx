@@ -4,6 +4,7 @@ import { OrbitControls, Stars } from '@react-three/drei'
 import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
 
 import { enemyMaterial, planeMaterial, playerMaterial } from './materials'
+import { STAR_COUNT, OBSTACLE_COUNT, WANDER_ENEMY_COUNT, HUNTER_ENEMY_COUNT } from './mapConstants'
 import { lerp } from './utils'
 import { WanderEnemy } from './commponents/WanderEnemy'
 import { HunterEnemy } from './commponents/HunterEnemy'
@@ -14,30 +15,23 @@ import { Terrain } from './commponents/Terrain'
 import { Effects } from './commponents/Effects'
 
 // user select none to everything
+// add context black hole only visible when done
+// end game level
+// levels -- differ size enemycount starcount color
+// disable history back
+// messenger browser contain overtouch scroll
 
-//  if mobile no FLoorReflection
-// game end logic (death/black hole gate)
-// levels
 // 3 lifes
+// powerup pacman +1 life
 // sounds
-// pacman powerup -> life
-// some ui starcount etc...
 // useloader for game start
-
 // specify colors
 // add domain
 // create svg favicon
 // og pictures !
-
 // menu
-// leaderboard
-
+// leaderboard -> highscoard based on time
 // extend api with removebody
-
-const starCount = 30
-const obstacleCount = 10
-const wanderEnemyCount = 3
-const hunterEnemyCount = 2
 
 const mapWidth = 30
 const mapHeight = 30
@@ -74,24 +68,24 @@ export default function App() {
         <ContactMaterials />
         <Terrain mapWidth={mapWidth} mapHeight={mapHeight} />
 
-        {[...new Array(starCount)].map((_, i) => {
+        {[...new Array(STAR_COUNT)].map((_, i) => {
           const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
           return <Star key={`star-${i}`} position={[x, 3, z]} uuid={`star-${i}`} />
         })}
 
-        {[...new Array(obstacleCount)].map((_, i) => {
+        {[...new Array(OBSTACLE_COUNT)].map((_, i) => {
           const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 3)
           return <Obstacle key={`obstacle-${i}`} position={[x, 0.5, z]} />
         })}
 
-        {[...new Array(wanderEnemyCount)].map((_, i) => {
+        {[...new Array(WANDER_ENEMY_COUNT)].map((_, i) => {
           const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 5)
           const uuid = `wander-enemy-${i}`
 
           return <WanderEnemy key={uuid} position={[x, 2, z]} uuid={uuid} />
         })}
 
-        {[...new Array(hunterEnemyCount)].map((_, i) => {
+        {[...new Array(HUNTER_ENEMY_COUNT)].map((_, i) => {
           const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 6)
           const uuid = `hunter-enemy-${i}`
           const fieldUuid = `hunter-field-${i}`

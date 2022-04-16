@@ -4,3 +4,4 @@ export const STAR_GROUP = 3
 export const COLLECTED_STAR_GROUP = 4
 export const ENEMY_GROUP = 5
 export const OBSTACLE_GROUP = 6
+export const BLACK_HOLE_GROUP = 7
