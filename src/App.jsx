@@ -40,9 +40,8 @@ const Stars = React.memo(({ mapWidth, mapHeight, level, count }) => {
   return (
     <>
       {[...new Array(count)].map((_, i) => {
-        console.log('star lefut')
         const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
-        console.log('ez is lefut')
+
         return <Star key={`star-${i}-${level}`} position={[x, 3, z]} uuid={`star-${i}-${level}`} />
       })}
     </>
@@ -53,10 +52,9 @@ const Obstacles = React.memo(({ mapWidth, mapHeight, level, count }) => {
   return (
     <>
       {[...new Array(count)].map((_, i) => {
-        console.log('obstacle lefut')
         const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 3)
         const size = lerp(Math.random(), 1, 3)
-        console.log('lefut')
+
         return <Obstacle key={`obstacle-${i}-${level}`} position={[x, size, z]} uuid={`obstacle-${i}-${level}`} size={size} />
       })}
     </>
@@ -67,7 +65,6 @@ const WanderEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
   return (
     <>
       {[...new Array(count)].map((_, i) => {
-        console.log('wander lefut')
         const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 5)
         const uuid = `wander-enemy-${i}-${level}`
 
@@ -81,10 +78,10 @@ const HunterEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
   return (
     <>
       {[...new Array(count)].map((_, i) => {
-        console.log('hunter lefut')
         const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 6)
         const uuid = `hunter-enemy-${i}-${level}`
         const fieldUuid = `hunter-field-${i}-${level}`
+
         return <HunterEnemy key={uuid} position={[x, 2, z]} uuid={uuid} fieldUuid={fieldUuid} />
       })}
     </>
