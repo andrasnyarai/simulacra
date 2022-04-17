@@ -14,6 +14,7 @@ import { Player } from './commponents/Player'
 import { Terrain } from './commponents/Terrain'
 import { Effects } from './commponents/Effects'
 import { useStore } from './useStore'
+import { SpinnerEnemy } from './commponents/SpinnerEnemy'
 
 function calculateStartingPosition(mapWidth, mapHeight, startOffset) {
   const offset = 2.5
@@ -121,6 +122,7 @@ export default function App() {
           <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
 
           <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
+          {/* <SpinnerEnemy position={[-10, 2, 0]} /> */}
           <Player position={[0, 1, 0]} uuid={`player`} />
         </scene>
         {/* </Debug> */}

@@ -52,11 +52,11 @@ export function HunterEnemy(props) {
     <group ref={ref} dispose={null} uuid={props.uuid}>
       <mesh ref={fieldRef} uuid={props.fieldUuid} />
       <Dodecahedron args={[0.6, 0]} castShadow receiveShadow>
-        <MeshWobbleMaterial color="purple" speed={5} factor={50} />
+        <MeshWobbleMaterial color="red" speed={5} factor={50} />
         <animated.pointLight
           position={[-0.75, 0, 0]}
           intensity={intensity}
-          color="purple"
+          color="red"
           shadow-mapSize-height={512}
           shadow-mapSize-width={512}
           distance={10}
@@ -64,7 +64,7 @@ export function HunterEnemy(props) {
         <animated.pointLight
           position={[0.75, 0, 0]}
           intensity={intensity}
-          color="purple"
+          color="red"
           shadow-mapSize-height={512}
           shadow-mapSize-width={512}
           distance={10}

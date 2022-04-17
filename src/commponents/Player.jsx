@@ -15,7 +15,7 @@ const AnimatedSphere = animated(Sphere)
 export function Player(props) {
   const { collectStar, loadnNextLevel } = useStore((state) => state)
   const [alive, setAlive] = useState(true)
-  const [lightIntensity, setLightIntensity] = useState(0.3)
+  const [lightIntensity, setLightIntensity] = useState(3.9)
   const { scale, intensity } = useSpring({ scale: alive ? 1 : 0.1, intensity: alive ? 0.05 : 1 })
 
   const [ref, api] = useSphere(() => ({
