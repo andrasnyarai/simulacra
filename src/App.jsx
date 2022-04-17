@@ -127,25 +127,25 @@ export default function App() {
       {/* <OrbitControls /> */}
 
       <Physics gravity={[0, -10, 0]}>
-        <Debug scale={1.1}>
-          <ContactMaterials />
-          <scene key={level}>
-            <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} />
+        {/* <Debug scale={1.1}> */}
+        <ContactMaterials />
+        <scene key={level}>
+          <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} />
 
-            <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
-            <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
+          <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
+          <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
 
-            <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
-            <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
-            <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
+          <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
+          <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
+          <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
 
-            <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
+          <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
 
-            <Player position={[0, 1, 0]} uuid={`player`} />
+          <Player position={[0, 1, 0]} uuid={`player`} />
 
-            <Menu />
-          </scene>
-        </Debug>
+          <Menu />
+        </scene>
+        {/* </Debug> */}
       </Physics>
       <Effects />
     </Canvas>
