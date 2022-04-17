@@ -55,8 +55,8 @@ const levels = [
     spinnerEnemyCount: 0,
   },
   {
-    mapHeight: 70,
-    mapWidth: 70,
+    mapHeight: 60,
+    mapWidth: 60,
     levelColor: 'blue',
     starCount: 20,
     obstacleCount: 18,
@@ -75,7 +75,7 @@ const levels = [
     spinnerEnemyCount: 0,
   },
   {
-    mapHeight: 100,
+    mapHeight: 85,
     mapWidth: 30,
     levelColor: 'blue',
     starCount: 50,
