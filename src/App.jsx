@@ -136,9 +136,9 @@ export default function App() {
           <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
           <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
 
-          <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
+          <BlackHole position={[0, 1, 0]} uuid="black-hole" isOpen={isGateOpen} />
 
-          <Player position={[0, 1, 0]} uuid={`player`} />
+          <Player position={[0, 1, 0]} uuid="player" />
 
           <Menu />
         </scene>
