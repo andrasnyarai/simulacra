@@ -1,7 +1,7 @@
 {
   "name": "simulacra",
   "version": "1.0.0",
-  "description": "a 3d physics arcade game",
+  "description": "3d physics arcade game",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
