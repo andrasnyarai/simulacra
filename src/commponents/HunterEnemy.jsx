@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { MeshWobbleMaterial, Sphere, Dodecahedron } from '@react-three/drei'
+import { MeshWobbleMaterial, Dodecahedron } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
 import { animated, useSpring } from '@react-spring/three'
 
-import { ENEMY_GROUP } from '../groups'
+import { ENEMY_GROUP, ENEMY_MATERIAL, ENEMY_MOVEMENT_SPEED } from '../constants'
 import { lerp } from '../utils'
-import { enemyMaterial } from '../materials'
+
+const movementBound = 10 * ENEMY_MOVEMENT_SPEED
 
 export function HunterEnemy(props) {
   const [isAttacking, setIsAttacking] = useState(false)
@@ -15,7 +16,7 @@ export function HunterEnemy(props) {
     args: [0.6],
     mass: 3,
     ...props,
-    material: enemyMaterial,
+    material: ENEMY_MATERIAL,
     collisionFilterGroup: ENEMY_GROUP,
   }))
 
@@ -36,7 +37,7 @@ export function HunterEnemy(props) {
 
   useFrame(({ clock }) => {
     if (clock.elapsedTime % Math.random() < 0.005 && !isAttacking) {
-      api.velocity.set(lerp(Math.random(), -10, 10), 0, lerp(Math.random(), -10, 10))
+      api.velocity.set(lerp(Math.random(), -movementBound, movementBound), 0, lerp(Math.random(), -movementBound, movementBound))
     }
   })
 

@@ -3,7 +3,7 @@ import { MeshDistortMaterial, Sphere } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
 import { useSpring, animated } from '@react-spring/three'
 
-import { BLACK_HOLE_GROUP, FLOOR_GROUP, PLAYER_GROUP } from '../groups'
+import { BLACK_HOLE_GROUP, FLOOR_GROUP, PLAYER_GROUP } from '../constants'
 
 const AnimatedSphere = animated(Sphere)
 const AnimatedMeshDistortMaterial = animated(MeshDistortMaterial)

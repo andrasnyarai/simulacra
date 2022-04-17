@@ -3,7 +3,7 @@ import { useSpring, animated } from '@react-spring/three'
 import { useSphere } from '@react-three/cannon'
 import { Sphere } from '@react-three/drei'
 
-import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP } from '../groups'
+import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP } from '../constants'
 
 const AnimatedSphere = animated(Sphere)
 

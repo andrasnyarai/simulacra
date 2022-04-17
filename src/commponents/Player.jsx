@@ -6,36 +6,37 @@ import { useSpring, animated } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
 
 import { isMobile, useKeyPress } from '../utils'
-import { FLOOR_GROUP, PLAYER_GROUP } from '../groups'
-import { playerMaterial } from '../materials'
+import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL } from '../constants'
 import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
 export function Player(props) {
-  const { collectStar, loadnNextLevel } = useStore((state) => state)
-  const [alive, setAlive] = useState(true)
-  const [lightIntensity, setLightIntensity] = useState(3.9)
-  const { scale, intensity } = useSpring({ scale: alive ? 1 : 0.1, intensity: alive ? 0.05 : 1 })
+  const { collectStar, loadNextLevel, isPlayerAlive, looseLife } = useStore((state) => state)
+  const { camera } = useThree()
+
+  const [lightIntensity, setLightIntensity] = useState(2)
+  const [isHidden, setIsHidden] = useState(false)
+  const { scale, intensity } = useSpring({ scale: isHidden ? 0.1 : 1, intensity: isHidden ? 1 : 0.05 })
 
   const [ref, api] = useSphere(() => ({
     args: [0.5],
     mass: 2,
     ...props,
     collisionFilterGroup: PLAYER_GROUP,
-    material: playerMaterial,
+    material: PLAYER_MATERIAL,
     onCollide: ({ contact }) => {
       if (contact.bi.uuid.includes('enemy')) {
-        setAlive(false)
-        api.collisionFilterMask.set(FLOOR_GROUP)
-        setTimeout(() => api.collisionFilterMask.set(null), 200)
+        setIsHidden(true)
+        api.collisionFilterMask.set(null)
+        looseLife()
       }
 
       if (contact.bi.uuid.includes('black-hole')) {
-        setAlive(false)
+        setIsHidden(true)
         api.collisionFilterMask.set(null)
         api.velocity.set(0, -1, 0)
-        setTimeout(() => loadnNextLevel(), 500)
+        setTimeout(() => loadNextLevel(), 200)
       }
 
       if (contact.bi.uuid.includes('star')) {
@@ -47,7 +48,7 @@ export function Player(props) {
 
   useDrag(
     ({ movement: [x, y] }) => {
-      if (!alive) {
+      if (!isPlayerAlive || isHidden) {
         return
       }
 
@@ -58,7 +59,15 @@ export function Player(props) {
     { target: document.getElementById('root') }
   )
 
-  const { camera } = useThree()
+  useEffect(() => {
+    if (isPlayerAlive && isHidden) {
+      const [x, , z] = camera.position
+      api.position.set(x, 0.5, z)
+      api.velocity.set(0, 0, 0)
+      api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP)
+      setIsHidden(false)
+    }
+  }, [isPlayerAlive])
 
   useEffect(() => {
     const unsubscribe = api.position.subscribe(([x, y, z]) => {
@@ -67,12 +76,12 @@ export function Player(props) {
       camera.position.z = z
     })
 
-    if (!alive) {
+    if (!isPlayerAlive || isHidden) {
       unsubscribe()
     }
 
     return unsubscribe
-  }, [alive])
+  }, [isPlayerAlive, isHidden])
 
   const wHandler = useKeyPress('w')
   const sHandler = useKeyPress('s')
@@ -85,7 +94,7 @@ export function Player(props) {
   const arrowRightHandler = useKeyPress('ArrowRight')
 
   useFrame(() => {
-    if (!alive) {
+    if (!isPlayerAlive || isHidden) {
       return
     }
     const up = wHandler.current || arrowUpHandler.current

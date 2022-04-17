@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Box } from '@react-three/drei'
 import { useBox } from '@react-three/cannon'
 
-import { OBSTACLE_GROUP } from '../groups'
+import { OBSTACLE_GROUP } from '../constants'
 import { lerp, map } from '../utils'
 
 export function Obstacle({ size, ...props }) {

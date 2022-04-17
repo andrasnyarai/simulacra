@@ -2,14 +2,13 @@ import React from 'react'
 import { Box } from '@react-three/drei'
 import { useBox } from '@react-three/cannon'
 
-import { planeMaterial } from '../materials'
-import { FLOOR_GROUP } from '../groups'
+import { PLANE_MATERIAL, FLOOR_GROUP } from '../constants'
 
 function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, ...props }) {
   const [ref] = useBox(() => ({
     args: cannonArgs || args,
     position: cannonPosition || position,
-    material: planeMaterial,
+    material: PLANE_MATERIAL,
     rotation,
     collisionFilterGroup: FLOOR_GROUP,
     ...props,

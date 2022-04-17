@@ -3,18 +3,19 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Stars as StarsBackground } from '@react-three/drei'
 import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
 
-import { enemyMaterial, planeMaterial, playerMaterial } from './materials'
+import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL } from './constants'
 import { lerp } from './utils'
+import { useStore } from './useStore'
+import { Terrain } from './commponents/Terrain'
+import { Player } from './commponents/Player'
+import { Obstacle } from './commponents/Obstacle'
+import { Star } from './commponents/Star'
 import { WanderEnemy } from './commponents/WanderEnemy'
 import { HunterEnemy } from './commponents/HunterEnemy'
-import { BlackHole } from './commponents/BlackHole'
-import { Star } from './commponents/Star'
-import { Obstacle } from './commponents/Obstacle'
-import { Player } from './commponents/Player'
-import { Terrain } from './commponents/Terrain'
-import { Effects } from './commponents/Effects'
-import { useStore } from './useStore'
 import { SpinnerEnemy } from './commponents/SpinnerEnemy'
+import { BlackHole } from './commponents/BlackHole'
+import { Effects } from './commponents/Effects'
+import { Menu } from './commponents/Menu'
 
 function calculateStartingPosition(mapWidth, mapHeight, startOffset) {
   const offset = 2.5
@@ -31,8 +32,8 @@ function calculateStartingPosition(mapWidth, mapHeight, startOffset) {
 }
 
 function ContactMaterials() {
-  useContactMaterial(planeMaterial, playerMaterial)
-  useContactMaterial(planeMaterial, enemyMaterial)
+  useContactMaterial(PLANE_MATERIAL, PLAYER_MATERIAL)
+  useContactMaterial(PLANE_MATERIAL, ENEMY_MATERIAL)
 
   return null
 }
@@ -89,8 +90,23 @@ const HunterEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
   )
 })
 
+const SpinnerEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
+  return (
+    <>
+      {[...new Array(count)].map((_, i) => {
+        const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 6)
+        const uuid = `spinner-enemy-${i}-${level}`
+        const coreUuid = `spinner-enemy-core-${i}-${level}`
+
+        return <SpinnerEnemy key={uuid} position={[x, 2, z]} uuid={uuid} coreUuid={coreUuid} />
+      })}
+    </>
+  )
+})
+
 export default function App() {
   const {
+    isPlayerAlive,
     level,
     collectedStars,
     isGateOpen,
@@ -101,7 +117,8 @@ export default function App() {
     obstacleCount,
     wanderEnemyCount,
     hunterEnemyCount,
-    loadnNextLevel,
+    spinnerEnemyCount,
+    loadNextLevel,
   } = useStore((state) => state)
 
   return (
@@ -110,22 +127,25 @@ export default function App() {
       {/* <OrbitControls /> */}
 
       <Physics gravity={[0, -10, 0]}>
-        {/* <Debug scale={1.1}> */}
-        <ContactMaterials />
-        <scene key={level}>
-          <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} />
+        <Debug scale={1.1}>
+          <ContactMaterials />
+          <scene key={level}>
+            <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} />
 
-          <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
-          <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
+            <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
+            <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
 
-          <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
-          <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
+            <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
+            <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
+            <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
 
-          <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
-          {/* <SpinnerEnemy position={[-10, 2, 0]} /> */}
-          <Player position={[0, 1, 0]} uuid={`player`} />
-        </scene>
-        {/* </Debug> */}
+            <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
+
+            <Player position={[0, 1, 0]} uuid={`player`} />
+
+            <Menu />
+          </scene>
+        </Debug>
       </Physics>
       <Effects />
     </Canvas>
