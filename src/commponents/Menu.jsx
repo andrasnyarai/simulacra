@@ -3,7 +3,7 @@ import { useThree } from '@react-three/fiber'
 import { Box, Extrude, Text } from '@react-three/drei'
 import * as THREE from 'three'
 
-import { initialState, useStore } from '../useStore'
+import { initialState, useStore, allStarCount } from '../useStore'
 
 function Heart(props) {
   const shape = useMemo(() => {
@@ -30,9 +30,22 @@ function Heart(props) {
 }
 
 export function Menu() {
-  const { isPlayerAlive, lives, levelColor, restart, isGameOver } = useStore((state) => state)
+  const { isPlayerAlive, lives, levelColor, restart, isGameOver, isGameFinished, collectedStars } = useStore((state) => state)
   const { camera } = useThree()
   const [x, , z] = camera.position
+
+  if (isGameFinished) {
+    return (
+      <>
+        <Text scale={[5, 5, 5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 30, 0]}>
+          Thanks for playing
+        </Text>
+        <Text scale={[5, 5, 5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 30, 1]}>
+          {allStarCount}/{collectedStars}
+        </Text>
+      </>
+    )
+  }
 
   return (
     !isPlayerAlive && (

@@ -141,6 +141,17 @@ const levels = [
   // { mapHeight: 50, mapWidth: 50, levelColor: 'maroon', starCount: 5, obstacleCount: 5, wanderEnemyCount: 1, hunterEnemyCount: 1, spinnerEnemyCount: 0 },
 ]
 
+const endLevel = {
+  mapHeight: 10,
+  mapWidth: 10,
+  levelColor: 'black',
+  starCount: 0,
+  obstacleCount: 5,
+  wanderEnemyCount: 0,
+  hunterEnemyCount: 0,
+  spinnerEnemyCount: 0,
+}
+
 export const allStarCount = levels.map(({ starCount }) => starCount).reduce((a, b) => a + b)
 
 export const useStore = create((set) => ({
@@ -148,19 +159,26 @@ export const useStore = create((set) => ({
   lives: 3,
   level: 0,
   collectedStars: 0,
+  collectedStarsOnLevel: 0,
   isGateOpen: false,
   isGameOver: false,
+  isGameFinished: false,
   ...levels[0],
   collectStar: () =>
-    set((state) => ({ collectedStars: state.collectedStars + 1, isGateOpen: state.collectedStars + 1 > state.starCount * winThreshold })),
+    set((state) => ({
+      collectedStarsOnLevel: state.collectedStarsOnLevel + 1,
+      isGateOpen: state.collectedStarsOnLevel + 1 > state.starCount * winThreshold,
+    })),
   looseLife: () => set((state) => ({ lives: state.lives - 1, isPlayerAlive: false, isGameOver: state.lives - 1 <= 0 })),
   restart: () => set(() => ({ isPlayerAlive: true })),
   loadNextLevel: () =>
     set((state) => ({
       level: state.level + 1,
       isGateOpen: false,
-      collectedStars: 0,
-      ...levels[state.level + 1],
+      collectedStars: state.collectedStars + state.collectedStarsOnLevel,
+      collectedStarsOnLevel: 0,
+      isGameFinished: state.level + 1 === levels.length,
+      ...(state.level + 1 === levels.length ? endLevel : levels[state.level + 1]),
     })),
 }))
 

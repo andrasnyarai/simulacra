@@ -106,9 +106,7 @@ const SpinnerEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
 
 export default function App() {
   const {
-    isPlayerAlive,
     level,
-    collectedStars,
     isGateOpen,
     levelColor,
     mapWidth,
@@ -118,7 +116,6 @@ export default function App() {
     wanderEnemyCount,
     hunterEnemyCount,
     spinnerEnemyCount,
-    loadNextLevel,
   } = useStore((state) => state)
 
   return (
