@@ -36,17 +36,17 @@ export function Menu() {
 
   return (
     !isPlayerAlive && (
-      <group position={[x, 1, z]}>
-        <Heart rotation={[Math.PI / 2, 0, 0]} scale={0.01} position={[-0.25, 0, 0.25]} />
-        <Text scale={[10, 10, 10]} color="white" maxWidth={1} rotation={[-Math.PI / 2, 0, 0]}>
+      <group position={[x, 40, z]}>
+        <Heart rotation={[Math.PI / 2, 0, 0]} scale={0.001} position={[-0.025, 0, 0.1]} />
+        <Text scale={[1, 1, 1]} color="white" rotation={[-Math.PI / 2, 0, 0]}>
           {isGameOver ? '' : 'x'}
         </Text>
-        <Text scale={[5, 5, 5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 1, 0.75]}>
+        <Text scale={[0.5, 0.5, 0.5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.5, 0.1375]}>
           {lives}
         </Text>
 
         <Box
-          args={[1000, 1000, 1]}
+          args={[100, 100, 1]}
           rotation={[Math.PI / 2, 0, 0]}
           onClick={() => (isGameOver ? useStore.setState(initialState, true) : restart())}
         >

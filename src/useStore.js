@@ -141,6 +141,8 @@ const levels = [
   // { mapHeight: 50, mapWidth: 50, levelColor: 'maroon', starCount: 5, obstacleCount: 5, wanderEnemyCount: 1, hunterEnemyCount: 1, spinnerEnemyCount: 0 },
 ]
 
+export const allStarCount = levels.map(({ starCount }) => starCount).reduce((a, b) => a + b)
+
 export const useStore = create((set) => ({
   isPlayerAlive: true,
   lives: 3,
