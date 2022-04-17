@@ -133,7 +133,7 @@ const levels = [
     starCount: 40,
     obstacleCount: 20,
     wanderEnemyCount: 0,
-    hunterEnemyCount: 0,
+    hunterEnemyCount: 1,
     spinnerEnemyCount: 2,
   },
   // { mapHeight: 50, mapWidth: 50, levelColor: 'maroon', starCount: 5, obstacleCount: 5, wanderEnemyCount: 1, hunterEnemyCount: 1, spinnerEnemyCount: 0 },
