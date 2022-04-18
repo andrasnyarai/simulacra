@@ -4,7 +4,7 @@ import { Stars as StarsBackground, OrbitControls } from '@react-three/drei'
 import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
 
 import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL } from './constants'
-import { lerp } from './utils'
+import { isMobile, lerp } from './utils'
 import { useStore } from './useStore'
 import { Terrain } from './commponents/Terrain'
 import { Player } from './commponents/Player'
@@ -119,7 +119,12 @@ export default function App() {
   } = useStore((state) => state)
 
   return (
-    <Canvas camera={{ fov: 25, position: [0, 45, 0] }} shadows colorManagement onCreated={(state) => state.gl.setClearColor('black')}>
+    <Canvas
+      camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }}
+      shadows
+      colorManagement
+      onCreated={(state) => state.gl.setClearColor('black')}
+    >
       <StarsBackground />
       {/* <OrbitControls /> */}
 
