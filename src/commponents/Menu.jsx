@@ -41,7 +41,7 @@ export function Menu() {
           Thanks for playing
         </Text>
         <Text scale={[5, 5, 5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 30, 1]}>
-          {allStarCount}/{collectedStars}
+          {collectedStars}/{allStarCount}
         </Text>
       </>
     )

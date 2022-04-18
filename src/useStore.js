@@ -75,7 +75,7 @@ const levels = [
     spinnerEnemyCount: 0,
   },
   {
-    mapHeight: 85,
+    mapHeight: 70,
     mapWidth: 30,
     levelColor: 'blue',
     starCount: 50,
