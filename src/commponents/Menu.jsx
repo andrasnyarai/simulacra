@@ -4,6 +4,7 @@ import { Box, Extrude, Text } from '@react-three/drei'
 import * as THREE from 'three'
 
 import { initialState, useStore, allStarCount } from '../useStore'
+import { isMobile } from '../utils'
 
 function Heart(props) {
   const shape = useMemo(() => {
@@ -49,12 +50,12 @@ export function Menu() {
 
   return (
     !isPlayerAlive && (
-      <group position={[x, 40, z]}>
+      <group position={[x, 40, z]} scale={isMobile() ? 1.3 : 1}>
         <Heart rotation={[Math.PI / 2, 0, 0]} scale={0.001} position={[-0.025, 0, 0.1]} />
         <Text scale={[1, 1, 1]} color="white" rotation={[-Math.PI / 2, 0, 0]}>
           {isGameOver ? '' : 'x'}
         </Text>
-        <Text scale={[0.5, 0.5, 0.5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.5, 0.1375]}>
+        <Text scale={[0.5, 0.5, 0.5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.75, isMobile() ? 0.1275 : 0.1325]}>
           {lives}
         </Text>
 
