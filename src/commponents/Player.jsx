@@ -131,7 +131,7 @@ export function Player(props) {
       <Trail
         width={3}
         color="white"
-        length={2}
+        length={1.5}
         decay={1}
         local={false}
         stride={0}
