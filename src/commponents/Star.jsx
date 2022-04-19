@@ -19,7 +19,6 @@ export function Star(props) {
     args: [0.4],
     mass: 0.00001,
     ...props,
-    allowSleep: true,
     collisionFilterGroup: STAR_GROUP,
     onCollide: ({ contact }) => {
       if (contact.bj.uuid.includes('player')) {
