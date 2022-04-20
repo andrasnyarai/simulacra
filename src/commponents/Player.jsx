@@ -60,10 +60,8 @@ export function Player(props) {
     { target: document.getElementById('root') }
   )
 
-  console.log(isPlayerAlive, 'isPlayerAlive', props.uuid)
-
   useEffect(() => {
-    console.log('load new level')
+    //  level transition reposition
     api.position.set(0, 0.5, 0)
     api.velocity.set(0, 0, 0)
     api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP)
