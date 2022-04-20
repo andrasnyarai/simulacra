@@ -107,6 +107,7 @@ const SpinnerEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
 export default function App() {
   const {
     level,
+    lives,
     isGateOpen,
     levelColor,
     mapWidth,
@@ -123,32 +124,42 @@ export default function App() {
   console.log(isGateOpen, 'isGateOpen in app', starCount, collectedStarsOnLevel)
 
   return (
-    <Canvas camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }} shadows onCreated={(state) => state.gl.setClearColor('black')}>
-      <StarsBackground />
-      {/* <OrbitControls /> */}
+    <>
+      <div style={{ position: 'absolute', color: 'white', zIndex: 1, fontSize: 20 }}>
+        ⭐{collectedStarsOnLevel}/{starCount} ❤️{lives} 🗺️{level + 1}
+      </div>
+      <Canvas
+        dpr={1}
+        camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }}
+        shadows
+        onCreated={(state) => state.gl.setClearColor('black')}
+      >
+        <StarsBackground />
+        {/* <OrbitControls /> */}
 
-      <Physics gravity={[0, -10, 0]}>
-        {/* <Debug scale={1.1}> */}
-        <ContactMaterials />
-        <scene key={level}>
-          <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
-        </scene>
-        <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
-        <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
+        <Physics gravity={[0, -10, 0]}>
+          {/* <Debug scale={1.1}> */}
+          <ContactMaterials />
+          <scene key={level}>
+            <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
+          </scene>
+          <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
+          <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
 
-        <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
-        <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
-        <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
+          <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
+          <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
+          <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
 
-        {/*  dont pass down you can have it inside the compontn `isGateOpen` */}
-        <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
+          {/*  dont pass down you can have it inside the compontn `isGateOpen` */}
+          <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
 
-        <Player position={[0, 1, 0]} uuid={`player`} />
-        {/* </scene> */}
-        {/* </Debug> */}
-      </Physics>
-      <Menu />
-      {/* <Effects /> */}
-    </Canvas>
+          <Player position={[0, 1, 0]} uuid={`player`} />
+          {/* </scene> */}
+          {/* </Debug> */}
+        </Physics>
+        <Menu />
+        {/* <Effects /> */}
+      </Canvas>
+    </>
   )
 }

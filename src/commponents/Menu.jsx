@@ -49,13 +49,9 @@ export function Menu() {
   }
 
   return (
-    <group position={[x, 40, z]} scale={isMobile() ? 1.3 : 1} opacity={isPlayerAlive ? 0 : 1} transparent>
-      <Heart rotation={[Math.PI / 2, 0, 0]} scale={0.001} position={[-0.025, 0, 0.1]} />
+    <group position={[x, 40, z]} scale={isMobile() ? 1.3 : 1}>
       <Text scale={[1, 1, 1]} color="white" rotation={[-Math.PI / 2, 0, 0]}>
-        {isGameOver ? '' : 'x'}
-      </Text>
-      <Text scale={[0.5, 0.5, 0.5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.75, isMobile() ? 0.1275 : 0.1325]}>
-        {lives}
+        {isGameOver || isPlayerAlive ? '' : 'x'}
       </Text>
 
       <Box

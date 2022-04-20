@@ -27,7 +27,7 @@ export function HunterEnemy(props) {
     ...props,
     onCollide: ({ contact }) => {
       // extract into function
-      if (contact.bj.uuid.includes('player') || contact.bi.uuid.includes('player')) {
+      if (contact.bj.uuid.includes('player')) {
         setIsAttacking(true)
         api.velocity.set(...contact.ni.map((n) => n * 8))
 
