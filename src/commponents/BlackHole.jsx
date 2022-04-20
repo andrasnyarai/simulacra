@@ -36,14 +36,20 @@ export function BlackHole({ isOpen, ...props }) {
   }))
 
   useEffect(() => {
+    console.log('isOpen', isOpen)
     if (isOpen) {
       api.collisionFilterMask.set(FLOOR_GROUP | PLAYER_GROUP)
+    } else {
+      api.position.set(0, 1, 0)
+      api.velocity.set(0, 0, 0)
+      api.collisionFilterMask.set(FLOOR_GROUP)
+      setTransitioning(false)
     }
   }, [isOpen])
 
   return (
     <group ref={ref} dispose={null} uuid={props.uuid}>
-      <AnimatedSphere args={[1]} scale={scale} castShadow receiveShadow>
+      <AnimatedSphere args={[1]} scale={scale} castShadow receiveShadow opacity={0.1} transparent>
         <AnimatedMeshDistortMaterial color="black" speed={5} distort={distort} radius={radius} />
         <animated.pointLight
           position={[0, 0, 0]}

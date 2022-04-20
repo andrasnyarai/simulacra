@@ -21,7 +21,7 @@ export function Star(props) {
     ...props,
     collisionFilterGroup: STAR_GROUP,
     onCollide: ({ contact }) => {
-      if (contact.bj.uuid.includes('player')) {
+      if (contact.bj.uuid.includes('player') || contact.bi.uuid.includes('player')) {
         setCollected(true)
 
         api.collisionFilterMask.set(FLOOR_GROUP)

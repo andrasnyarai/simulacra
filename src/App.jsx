@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Stars as StarsBackground, OrbitControls } from '@react-three/drei'
 import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
@@ -112,19 +112,18 @@ export default function App() {
     mapWidth,
     mapHeight,
     starCount,
+    collectedStarsOnLevel,
     obstacleCount,
     wanderEnemyCount,
     hunterEnemyCount,
     spinnerEnemyCount,
+    isPlayerAlive,
   } = useStore((state) => state)
 
+  console.log(isGateOpen, 'isGateOpen in app', starCount, collectedStarsOnLevel)
+
   return (
-    <Canvas
-      camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }}
-      shadows
-      colorManagement
-      onCreated={(state) => state.gl.setClearColor('black')}
-    >
+    <Canvas camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }} shadows onCreated={(state) => state.gl.setClearColor('black')}>
       <StarsBackground />
       {/* <OrbitControls /> */}
 
@@ -132,24 +131,24 @@ export default function App() {
         {/* <Debug scale={1.1}> */}
         <ContactMaterials />
         <scene key={level}>
-          <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} />
-
-          <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
-          <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
-
-          <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
-          <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
-          <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
-
-          <BlackHole position={[0, 1, 0]} uuid="black-hole" isOpen={isGateOpen} />
-
-          <Player position={[0, 1, 0]} uuid="player" />
-
-          <Menu />
+          <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
         </scene>
+        <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
+        <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
+
+        <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
+        <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
+        <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
+
+        {/*  dont pass down you can have it inside the compontn `isGateOpen` */}
+        <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
+
+        <Player position={[0, 1, 0]} uuid={`player`} />
+        {/* </scene> */}
         {/* </Debug> */}
       </Physics>
-      <Effects />
+      <Menu />
+      {/* <Effects /> */}
     </Canvas>
   )
 }

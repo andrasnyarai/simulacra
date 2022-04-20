@@ -15,20 +15,23 @@ function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, ..
   }))
 
   return (
-    <Box args={args} position={position} rotation={rotation} castShadow receiveShadow>
+    <Box args={args} position={position} rotation={rotation} uuid={props.uuid} castShadow receiveShadow>
       <meshPhongMaterial color={color} transparent opacity={0.5} />
     </Box>
   )
 }
 
-export function Terrain({ mapWidth, mapHeight, color }) {
+export function Terrain({ mapWidth, mapHeight, color, level }) {
   const wallThreeThickness = 0.1
   const wallCannonThickness = 5
+
+  const uuid = `terrain-${level}`
   return (
     <>
-      <Plane color={color} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} args={[mapWidth, mapHeight, 0.1]} />
+      <Plane uuid={uuid} color={color} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} args={[mapWidth, mapHeight, 0.1]} />
 
       <Plane
+        uuid={uuid}
         color={color}
         position={[0, 0.5, -mapHeight / 2]}
         cannonPosition={[0, 0.5, -mapHeight / 2 - wallCannonThickness / 2 + wallThreeThickness / 2]}
@@ -37,6 +40,7 @@ export function Terrain({ mapWidth, mapHeight, color }) {
         cannonArgs={[mapWidth + wallCannonThickness, 15, wallCannonThickness]}
       />
       <Plane
+        uuid={uuid}
         color={color}
         position={[0, 0.5, mapHeight / 2]}
         cannonPosition={[0, 0.5, mapHeight / 2 + wallCannonThickness / 2 - wallThreeThickness / 2]}
@@ -45,6 +49,7 @@ export function Terrain({ mapWidth, mapHeight, color }) {
         cannonArgs={[mapWidth + wallCannonThickness, 15, wallCannonThickness]}
       />
       <Plane
+        uuid={uuid}
         color={color}
         position={[-mapWidth / 2, 0.5, 0]}
         cannonPosition={[-mapWidth / 2 - wallCannonThickness / 2 + wallThreeThickness / 2, 0.5, 0]}
@@ -53,6 +58,7 @@ export function Terrain({ mapWidth, mapHeight, color }) {
         cannonArgs={[mapHeight + wallCannonThickness, 15, wallCannonThickness]}
       />
       <Plane
+        uuid={uuid}
         color={color}
         position={[mapWidth / 2, 0.5, 0]}
         cannonPosition={[mapWidth / 2 + wallCannonThickness / 2 - wallThreeThickness / 2, 0.5, 0]}
