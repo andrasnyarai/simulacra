@@ -88,7 +88,7 @@ const levels = [
   {
     mapHeight: 40,
     mapWidth: 40,
-    levelColor: 'indigo',
+    levelColor: 'rebeccapurple',
     starCount: 20,
     obstacleCount: 5,
     wanderEnemyCount: 0,
@@ -98,7 +98,7 @@ const levels = [
   {
     mapHeight: 35,
     mapWidth: 45,
-    levelColor: 'indigo',
+    levelColor: 'rebeccapurple',
     starCount: 25,
     obstacleCount: 0,
     wanderEnemyCount: 7,
@@ -108,7 +108,7 @@ const levels = [
   {
     mapHeight: 40,
     mapWidth: 50,
-    levelColor: 'indigo',
+    levelColor: 'rebeccapurple',
     starCount: 25,
     obstacleCount: 8,
     wanderEnemyCount: 15,
@@ -118,7 +118,7 @@ const levels = [
   {
     mapHeight: 30,
     mapWidth: 30,
-    levelColor: 'indigo',
+    levelColor: 'rebeccapurple',
     starCount: 18,
     obstacleCount: 4,
     wanderEnemyCount: 2,

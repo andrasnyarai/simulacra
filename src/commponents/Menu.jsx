@@ -49,24 +49,21 @@ export function Menu() {
   }
 
   return (
-    !isPlayerAlive && (
-      <group position={[x, 40, z]} scale={isMobile() ? 1.3 : 1}>
-        <Heart rotation={[Math.PI / 2, 0, 0]} scale={0.001} position={[-0.025, 0, 0.1]} />
-        <Text scale={[1, 1, 1]} color="white" rotation={[-Math.PI / 2, 0, 0]}>
-          {isGameOver ? '' : 'x'}
-        </Text>
-        <Text scale={[0.5, 0.5, 0.5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.75, isMobile() ? 0.1275 : 0.1325]}>
-          {lives}
-        </Text>
+    <group position={[x, 40, z]} scale={isMobile() ? 1.3 : 1}>
+      <Text scale={[1, 1, 1]} color="white" rotation={[-Math.PI / 2, 0, 0]}>
+        {isGameOver || isPlayerAlive ? '' : 'x'}
+      </Text>
 
-        <Box
-          args={[100, 100, 1]}
-          rotation={[Math.PI / 2, 0, 0]}
-          onClick={() => (isGameOver ? useStore.setState(initialState, true) : restart())}
-        >
-          <meshPhongMaterial color={levelColor} transparent opacity={0.1} />
-        </Box>
-      </group>
-    )
+      <Box
+        args={[100, 100, 1]}
+        rotation={[Math.PI / 2, 0, 0]}
+        onClick={() => {
+          if (isPlayerAlive) return
+          isGameOver ? useStore.setState(initialState, true) : restart()
+        }}
+      >
+        <meshPhongMaterial color={levelColor} transparent opacity={0.1} />
+      </Box>
+    </group>
   )
 }

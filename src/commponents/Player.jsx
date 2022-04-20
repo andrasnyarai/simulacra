@@ -12,10 +12,10 @@ import { useStore } from '../useStore'
 const AnimatedSphere = animated(Sphere)
 
 export function Player(props) {
-  const { collectStar, loadNextLevel, isPlayerAlive, looseLife } = useStore((state) => state)
+  const { collectStar, loadNextLevel, isPlayerAlive, looseLife, level } = useStore((state) => state)
   const { camera } = useThree()
 
-  const [lightIntensity, setLightIntensity] = useState(2)
+  const [lightIntensity, setLightIntensity] = useState(0.1)
   const [isHidden, setIsHidden] = useState(false)
   const { scale, intensity } = useSpring({ scale: isHidden ? 0.1 : 1, intensity: isHidden ? 1 : 0.05 })
 
@@ -23,10 +23,11 @@ export function Player(props) {
     args: [0.5],
     mass: 2,
     ...props,
+    allowSleep: true,
     collisionFilterGroup: PLAYER_GROUP,
     material: PLAYER_MATERIAL,
     onCollide: ({ contact }) => {
-      if (contact.bi.uuid.includes('enemy')) {
+      if (contact.bi.uuid.includes('enemy') || contact.bj.uuid.includes('enemy')) {
         setIsHidden(true)
         api.collisionFilterMask.set(null)
         looseLife()
@@ -39,7 +40,7 @@ export function Player(props) {
         setTimeout(() => loadNextLevel(), 200)
       }
 
-      if (contact.bi.uuid.includes('star')) {
+      if (contact.bi.uuid.includes('star') || contact.bj.uuid.includes('star')) {
         setLightIntensity((intensity) => intensity + 0.05)
         collectStar()
       }
@@ -60,6 +61,16 @@ export function Player(props) {
   )
 
   useEffect(() => {
+    //  level transition reposition
+    api.position.set(0, 0.5, 0)
+    api.velocity.set(0, 0, 0)
+    api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP)
+
+    setIsHidden(false)
+  }, [level])
+
+  useEffect(() => {
+    // respawn
     if (isPlayerAlive && isHidden) {
       const [x, , z] = camera.position
       api.position.set(x, 0.5, z)
@@ -145,11 +156,10 @@ export function Player(props) {
           </AnimatedSphere>
           <pointLight
             intensity={lightIntensity}
-            castShadow
-            shadow-mapSize-height={512}
-            shadow-mapSize-width={512}
-            distance={lightIntensity * 100}
-            decay={lightIntensity * 10}
+            // castShadow
+            shadow-mapSize-height={128}
+            shadow-mapSize-width={128}
+            distance={10}
           />
         </group>
       </Trail>

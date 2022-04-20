@@ -38,6 +38,11 @@ export function BlackHole({ isOpen, ...props }) {
   useEffect(() => {
     if (isOpen) {
       api.collisionFilterMask.set(FLOOR_GROUP | PLAYER_GROUP)
+    } else {
+      api.position.set(0, 1, 0)
+      api.velocity.set(0, 0, 0)
+      api.collisionFilterMask.set(FLOOR_GROUP)
+      setTransitioning(false)
     }
   }, [isOpen])
 
