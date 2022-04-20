@@ -72,7 +72,7 @@ export function Player(props) {
   }, [level])
 
   useEffect(() => {
-    // restpawning the player
+    // respawn
     if (isPlayerAlive && isHidden) {
       const [x, , z] = camera.position
       api.position.set(x, 0.5, z)

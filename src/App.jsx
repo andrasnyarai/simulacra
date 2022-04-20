@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Stars as StarsBackground, OrbitControls } from '@react-three/drei'
 import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
@@ -120,8 +120,6 @@ export default function App() {
     spinnerEnemyCount,
     isPlayerAlive,
   } = useStore((state) => state)
-
-  console.log(isGateOpen, 'isGateOpen in app', starCount, collectedStarsOnLevel)
 
   return (
     <>

@@ -21,7 +21,7 @@ export function Obstacle({ size, ...props }) {
   const lightRef = useRef(null)
 
   useFrame(({ clock }) => {
-    // lightRef.current.distance = map(Math.sin(clock.getElapsedTime() + size), [-1, 1], [0.5, size * 0.75])
+    lightRef.current.distance = map(Math.sin(clock.getElapsedTime() + size), [-1, 1], [0.5, size * 0.75])
   })
 
   return (
@@ -30,7 +30,7 @@ export function Obstacle({ size, ...props }) {
         <meshPhongMaterial transparent opacity={0.3} color="#2326d4" emissive="#030450" shininess={1} />
       </Box>
 
-      {/* <pointLight ref={lightRef} intensity={10} color="#2326d4" /> */}
+      <pointLight ref={lightRef} intensity={10} color="#2326d4" />
 
       <Box args={[size * 0.75, size * 0.75, size * 0.75]} castShadow receiveShadow>
         <meshStandardMaterial wireframe wireframeLinewidth={10} color="#02022d" distance={10} />
