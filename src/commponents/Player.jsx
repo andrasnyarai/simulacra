@@ -73,7 +73,11 @@ export function Player(props) {
     // respawn
     if (isPlayerAlive && isHidden) {
       const [x, , z] = camera.position
-      api.position.set(x, 0.5, z)
+      if (level === 0) {
+        api.position.set(0, 0.5, 0)
+      } else {
+        api.position.set(x, 0.5, z)
+      }
       api.velocity.set(0, 0, 0)
       api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP)
       setIsHidden(false)
