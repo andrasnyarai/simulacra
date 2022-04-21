@@ -40,7 +40,7 @@ export function Star(props) {
     return unsubscribe
   }, [])
 
-  useFrame(({ camera, clock }) => {
+  useFrame(({ camera }) => {
     if (collected) {
       const [ax, ay, az] = position.current
       const [bx, by, bz] = camera.position

@@ -15,7 +15,7 @@ export function Player(props) {
   const { collectStar, loadNextLevel, isPlayerAlive, looseLife, level } = useStore((state) => state)
   const { camera } = useThree()
 
-  const [lightIntensity, setLightIntensity] = useState(0.1)
+  const [lightIntensity, setLightIntensity] = useState(0.5)
   const [isHidden, setIsHidden] = useState(false)
   const { scale, intensity } = useSpring({ scale: isHidden ? 0.1 : 1, intensity: isHidden ? 1 : 0.05 })
 
