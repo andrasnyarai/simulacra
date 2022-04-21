@@ -43,8 +43,9 @@ const Stars = React.memo(({ mapWidth, mapHeight, level, count }) => {
     <>
       {[...new Array(count)].map((_, i) => {
         const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
+        const speed = lerp(Math.random(), 1, 6)
 
-        return <Star key={`star-${i}-${level}`} position={[x, 3, z]} uuid={`star-${i}-${level}`} />
+        return <Star key={`star-${i}-${level}`} position={[x, 3, z]} uuid={`star-${i}-${level}`} speed={speed} />
       })}
     </>
   )
@@ -138,9 +139,14 @@ export default function App() {
         <Physics gravity={[0, -10, 0]}>
           {/* <Debug scale={1.1}> */}
           <ContactMaterials />
+
           <scene key={level}>
             <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
           </scene>
+
+          <Player position={[0, 1, 0]} uuid={`player`} />
+          <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
+
           <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
           <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
 
@@ -149,9 +155,7 @@ export default function App() {
           <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
 
           {/*  dont pass down you can have it inside the compontn `isGateOpen` */}
-          <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
 
-          <Player position={[0, 1, 0]} uuid={`player`} />
           {/* </scene> */}
           {/* </Debug> */}
         </Physics>

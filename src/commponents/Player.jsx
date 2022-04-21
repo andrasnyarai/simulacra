@@ -27,20 +27,20 @@ export function Player(props) {
     collisionFilterGroup: PLAYER_GROUP,
     material: PLAYER_MATERIAL,
     onCollide: ({ contact }) => {
-      if (contact.bi.uuid.includes('enemy') || contact.bj.uuid.includes('enemy')) {
+      if (contact.bj.uuid.includes('enemy')) {
         setIsHidden(true)
         api.collisionFilterMask.set(null)
         looseLife()
       }
 
-      if (contact.bi.uuid.includes('black-hole')) {
+      if (contact.bj.uuid.includes('black-hole')) {
         setIsHidden(true)
         api.collisionFilterMask.set(null)
         api.velocity.set(0, -1, 0)
         setTimeout(() => loadNextLevel(), 200)
       }
 
-      if (contact.bi.uuid.includes('star') || contact.bj.uuid.includes('star')) {
+      if (contact.bj.uuid.includes('star')) {
         setLightIntensity((intensity) => intensity + 0.05)
         collectStar()
       }

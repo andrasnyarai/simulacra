@@ -10,7 +10,7 @@ const levels = [
     starCount: 10,
     obstacleCount: 5,
     wanderEnemyCount: 0,
-    hunterEnemyCount: 1,
+    hunterEnemyCount: 0,
     spinnerEnemyCount: 0,
   },
   {
@@ -20,7 +20,7 @@ const levels = [
     starCount: 15,
     obstacleCount: 15,
     wanderEnemyCount: 1,
-    hunterEnemyCount: 1,
+    hunterEnemyCount: 0,
     spinnerEnemyCount: 0,
   },
   {

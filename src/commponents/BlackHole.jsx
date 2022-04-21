@@ -29,7 +29,7 @@ export function BlackHole({ isOpen, ...props }) {
     collisionFilterGroup: BLACK_HOLE_GROUP,
     collisionFilterMask: FLOOR_GROUP,
     onCollide: ({ contact }) => {
-      if (contact.bj.uuid.includes('player')) {
+      if (contact.bi.uuid.includes('player')) {
         setTransitioning(true)
       }
     },

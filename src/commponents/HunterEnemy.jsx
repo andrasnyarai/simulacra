@@ -26,10 +26,9 @@ export function HunterEnemy(props) {
     mass: 0,
     ...props,
     onCollide: ({ contact }) => {
-      if (contact.bj.uuid.includes('player') || contact.bi.uuid.includes('player')) {
+      if (contact.bi.uuid.includes('player')) {
         setIsAttacking(true)
-        const isPositiveForce = contact.bj.uuid.includes('player')
-        api.velocity.set(...contact.ni.map((n) => n * (isPositiveForce ? 1 : -1) * 8))
+        api.velocity.set(...contact.ni.map((n) => n * -8))
 
         setTimeout(() => setIsAttacking(false), 500)
       }
