@@ -13,3 +13,7 @@ export const OBSTACLE_GROUP = 6
 export const BLACK_HOLE_GROUP = 7
 
 export const ENEMY_MOVEMENT_SPEED = isMobile() ? 0.75 : 1
+
+export const WIN_THRESHOLD = 0.75
+
+export const RESPAWN_BLOCK_MS = 1000

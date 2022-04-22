@@ -5,8 +5,8 @@ import { useSphere } from '@react-three/cannon'
 import { useSpring, animated } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
 
-import { isMobile, useKeyPress } from '../utils'
-import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL } from '../constants'
+import { isMobile, map, useKeyPress } from '../utils'
+import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL, WIN_THRESHOLD } from '../constants'
 import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
@@ -14,12 +14,19 @@ const AnimatedSphere = animated(Sphere)
 const initialLightIntensity = 1.5
 
 export function Player(props) {
-  const { collectStar, loadNextLevel, isPlayerAlive, looseLife, level } = useStore((state) => state)
+  const { playerPosition, collectStar, collectedStarsOnLevel, starCount, loadNextLevel, isPlayerAlive, looseLife, level } = useStore(
+    (state) => state
+  )
   const { camera } = useThree()
 
   const [lightIntensity, setLightIntensity] = useState(initialLightIntensity)
   const [isHidden, setIsHidden] = useState(false)
-  const { scale, intensity } = useSpring({ scale: isHidden ? 0.1 : 1, intensity: isHidden ? 1 : 0.05 })
+  const size = map(collectedStarsOnLevel, [0, starCount * WIN_THRESHOLD], [0.2, 1])
+  const { scale, shieldScale, intensity } = useSpring({
+    shieldScale: isHidden ? 0.1 : 1,
+    scale: isHidden ? 0.1 : Math.min(size, 1),
+    intensity: isHidden ? 1 : 0.05,
+  })
 
   const [ref, api] = useSphere(() => ({
     args: [0.5],
@@ -73,14 +80,14 @@ export function Player(props) {
   }, [level])
 
   useEffect(() => {
-    // respawn
+    // respawn reposition
     if (isPlayerAlive && isHidden) {
       setLightIntensity(initialLightIntensity)
-      const [x, , z] = camera.position
+      const [x, y, z] = playerPosition
       if (level === 0) {
         api.position.set(0, 0.5, 0)
       } else {
-        api.position.set(x, 0.5, z)
+        api.position.set(x, y, z)
       }
       api.velocity.set(0, 0, 0)
       api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP)
@@ -148,7 +155,7 @@ export function Player(props) {
     <>
       <animated.ambientLight intensity={intensity} color="white" />
       <Trail
-        width={3}
+        width={2}
         color="white"
         length={1.5}
         decay={1}
@@ -159,6 +166,9 @@ export function Player(props) {
         attenuation={(width) => width}
       >
         <group ref={ref} uuid={props.uuid} dispose={null}>
+          <AnimatedSphere args={[0.5]} scale={shieldScale}>
+            <MeshDistortMaterial emissive="white" wireframe speed={5} distort={0.5} radius={1} />
+          </AnimatedSphere>
           <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
             <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
           </AnimatedSphere>

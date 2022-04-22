@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Stars as StarsBackground } from '@react-three/drei'
 import { Physics, useContactMaterial } from '@react-three/cannon'
 
 import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL } from './constants'
-import { isMobile, lerp } from './utils'
+import { isMobile, lerp, calculateStartingPosition } from './utils'
 import { useStore } from './useStore'
 import { Terrain } from './commponents/Terrain'
 import { Player } from './commponents/Player'
@@ -16,20 +16,6 @@ import { SpinnerEnemy } from './commponents/SpinnerEnemy'
 import { BlackHole } from './commponents/BlackHole'
 import { Effects } from './commponents/Effects'
 import { Menu } from './commponents/Menu'
-
-function calculateStartingPosition(mapWidth, mapHeight, startOffset) {
-  const offset = 2.5
-  const width = mapWidth - offset
-  const height = mapHeight - offset
-  let x = lerp(Math.random(), -width / 2, width / 2)
-  let z = lerp(Math.random(), -height / 2, height / 2)
-
-  while (-startOffset < x && x < startOffset && -startOffset < z && z < startOffset) {
-    x = lerp(Math.random(), -width / 2, width / 2)
-  }
-
-  return { x, z }
-}
 
 const Stars = React.memo(({ mapWidth, mapHeight, level, count }) => {
   return (
@@ -99,19 +85,27 @@ const SpinnerEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
 })
 
 const Scene = () => {
-  const { level, levelColor, mapWidth, mapHeight, starCount, obstacleCount, wanderEnemyCount, hunterEnemyCount, spinnerEnemyCount } =
-    useStore((state) => state)
+  const {
+    playerPosition,
+    level,
+    levelColor,
+    mapWidth,
+    mapHeight,
+    starCount,
+    obstacleCount,
+    wanderEnemyCount,
+    hunterEnemyCount,
+    spinnerEnemyCount,
+  } = useStore((state) => state)
 
   useContactMaterial(PLANE_MATERIAL, PLAYER_MATERIAL)
   useContactMaterial(PLANE_MATERIAL, ENEMY_MATERIAL)
 
   return (
-    <>
-      <scene key={level}>
-        <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
-      </scene>
+    <Suspense fallback={null}>
+      <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
 
-      <Player position={[0, 0, 0]} uuid={`player`} />
+      <Player position={playerPosition} uuid={`player`} />
       <BlackHole position={[0, 1, 0]} uuid={`black-hole`} />
 
       <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
@@ -120,39 +114,29 @@ const Scene = () => {
       <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
       <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
       <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
-    </>
-  )
-}
-
-function Ui() {
-  const { lives, starCount, collectedStarsOnLevel } = useStore((state) => state)
-  return (
-    <div style={{ position: 'absolute', color: 'white', zIndex: 1 }}>
-      ♡{lives} ☆{collectedStarsOnLevel}/{starCount}
-    </div>
+    </Suspense>
   )
 }
 
 export default function App() {
   return (
-    <>
-      <Ui />
-      <Canvas
-        shadows
-        dpr={window.devicePixelRatio}
-        camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }}
-        onCreated={(state) => state.gl.setClearColor('black')}
-      >
-        <StarsBackground />
+    <Canvas
+      shadows
+      dpr={window.devicePixelRatio}
+      camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }}
+      onCreated={(state) => {
+        state.gl.setClearColor('black')
+      }}
+    >
+      <StarsBackground />
 
-        <Physics gravity={[0, -10, 0]}>
-          <Scene />
-        </Physics>
+      <Physics gravity={[0, -10, 0]}>
+        <Scene />
+      </Physics>
 
-        <Menu />
+      <Menu />
 
-        <Effects />
-      </Canvas>
-    </>
+      <Effects />
+    </Canvas>
   )
 }

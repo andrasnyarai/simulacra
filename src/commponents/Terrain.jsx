@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Box } from '@react-three/drei'
 import { useBox } from '@react-three/cannon'
 
-import { PLANE_MATERIAL, FLOOR_GROUP } from '../constants'
+import { PLANE_MATERIAL, FLOOR_GROUP, RESPAWN_BLOCK_MS } from '../constants'
+import { initialState, useStore } from '../useStore'
 
-function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, ...props }) {
-  const [ref] = useBox(() => ({
+function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, onClick = () => {}, ...props }) {
+  useBox(() => ({
     args: cannonArgs || args,
     position: cannonPosition || position,
     material: PLANE_MATERIAL,
@@ -15,21 +16,40 @@ function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, ..
   }))
 
   return (
-    <Box args={args} position={position} rotation={rotation} uuid={props.uuid} castShadow receiveShadow>
+    <Box args={args} position={position} rotation={rotation} uuid={props.uuid} castShadow receiveShadow onClick={onClick}>
       <meshStandardMaterial color={color} transparent opacity={0.5} />
     </Box>
   )
 }
 
 export function Terrain({ mapWidth, mapHeight, color, level }) {
+  const { restart, isPlayerAlive, isGameOver } = useStore((state) => state)
+
   const wallThreeThickness = 0.1
   const wallCannonThickness = 5
 
   const uuid = `terrain-${level}`
+
+  const respawnBlock = useRef(false)
+
+  useEffect(() => {
+    async function blockRespawn() {
+      respawnBlock.current = true
+      await new Promise((res) => setTimeout(res, RESPAWN_BLOCK_MS))
+      respawnBlock.current = false
+    }
+
+    if (!isPlayerAlive) blockRespawn()
+  }, [isPlayerAlive])
+
   return (
-    <>
+    <scene key={uuid}>
       <Plane
-        uuid={uuid}
+        onClick={({ point }) => {
+          if (isPlayerAlive || respawnBlock.current) return
+          const [x, , z] = point
+          isGameOver ? useStore.setState(initialState, true) : restart([x, 0.5, z])
+        }}
         color={color}
         position={[0, 0, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
@@ -38,7 +58,6 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
       />
 
       <Plane
-        uuid={uuid}
         color={color}
         position={[0, 0.5, -mapHeight / 2]}
         cannonPosition={[0, 0.5, -mapHeight / 2 - wallCannonThickness / 2 + wallThreeThickness / 2]}
@@ -48,7 +67,6 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         receiveShadow
       />
       <Plane
-        uuid={uuid}
         color={color}
         position={[0, 0.5, mapHeight / 2]}
         cannonPosition={[0, 0.5, mapHeight / 2 + wallCannonThickness / 2 - wallThreeThickness / 2]}
@@ -58,7 +76,6 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         receiveShadow
       />
       <Plane
-        uuid={uuid}
         color={color}
         position={[-mapWidth / 2, 0.5, 0]}
         cannonPosition={[-mapWidth / 2 - wallCannonThickness / 2 + wallThreeThickness / 2, 0.5, 0]}
@@ -68,7 +85,6 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         receiveShadow
       />
       <Plane
-        uuid={uuid}
         color={color}
         position={[mapWidth / 2, 0.5, 0]}
         cannonPosition={[mapWidth / 2 + wallCannonThickness / 2 - wallThreeThickness / 2, 0.5, 0]}
@@ -77,6 +93,6 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         cannonArgs={[mapHeight + wallCannonThickness, 15, wallCannonThickness]}
         receiveShadow
       />
-    </>
+    </scene>
   )
 }

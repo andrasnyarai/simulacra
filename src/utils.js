@@ -12,6 +12,20 @@ export function map(value, [minFrom, maxFrom], [minTo, maxTo]) {
   return ((value - minFrom) * (maxTo - minTo)) / (maxFrom - minFrom) + minTo
 }
 
+export function calculateStartingPosition(mapWidth, mapHeight, startOffset) {
+  const offset = 2.5
+  const width = mapWidth - offset
+  const height = mapHeight - offset
+  let x = lerp(Math.random(), -width / 2, width / 2)
+  let z = lerp(Math.random(), -height / 2, height / 2)
+
+  while (-startOffset < x && x < startOffset && -startOffset < z && z < startOffset) {
+    x = lerp(Math.random(), -width / 2, width / 2)
+  }
+
+  return { x, z }
+}
+
 export function useKeyPress(targetKey) {
   const keyPressed = useRef(false)
 

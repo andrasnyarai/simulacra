@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-const winThreshold = 0.75
+import { WIN_THRESHOLD } from './constants'
 
 const levels = [
   {
@@ -185,6 +185,7 @@ export const useStore = create((set) => ({
   isPlayerAlive: true,
   lives: 3,
   level: 0,
+  playerPosition: [0, 0.5, 0],
   collectedStars: 0,
   collectedStarsOnLevel: 0,
   isGateOpen: false,
@@ -194,10 +195,10 @@ export const useStore = create((set) => ({
   collectStar: () =>
     set((state) => ({
       collectedStarsOnLevel: state.collectedStarsOnLevel + 1,
-      isGateOpen: state.collectedStarsOnLevel + 1 > state.starCount * winThreshold,
+      isGateOpen: state.collectedStarsOnLevel + 1 > state.starCount * WIN_THRESHOLD,
     })),
   looseLife: () => set((state) => ({ lives: state.lives - 1, isPlayerAlive: false, isGameOver: state.lives - 1 <= 0 })),
-  restart: () => set(() => ({ isPlayerAlive: true })),
+  restart: (playerPosition) => set(() => ({ isPlayerAlive: true, playerPosition })),
   loadNextLevel: () =>
     set((state) => ({
       level: state.level + 1,
