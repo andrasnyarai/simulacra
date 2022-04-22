@@ -16,7 +16,7 @@ function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, ..
 
   return (
     <Box args={args} position={position} rotation={rotation} uuid={props.uuid} castShadow receiveShadow>
-      <meshPhongMaterial color={color} transparent opacity={0.5} />
+      <meshStandardMaterial color={color} transparent opacity={0.5} />
     </Box>
   )
 }
@@ -28,7 +28,14 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
   const uuid = `terrain-${level}`
   return (
     <>
-      <Plane uuid={uuid} color={color} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} args={[mapWidth, mapHeight, 0.1]} />
+      <Plane
+        uuid={uuid}
+        color={color}
+        position={[0, 0, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        args={[mapWidth, mapHeight, 0.1]}
+        receiveShadow
+      />
 
       <Plane
         uuid={uuid}
@@ -38,6 +45,7 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         rotation={[0, 0, 0]}
         args={[mapWidth, 1, wallThreeThickness]}
         cannonArgs={[mapWidth + wallCannonThickness, 15, wallCannonThickness]}
+        receiveShadow
       />
       <Plane
         uuid={uuid}
@@ -47,6 +55,7 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         rotation={[0, 0, 0]}
         args={[mapWidth, 1, wallThreeThickness]}
         cannonArgs={[mapWidth + wallCannonThickness, 15, wallCannonThickness]}
+        receiveShadow
       />
       <Plane
         uuid={uuid}
@@ -56,6 +65,7 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         rotation={[0, -Math.PI / 2, 0]}
         args={[mapHeight, 1, wallThreeThickness]}
         cannonArgs={[mapHeight + wallCannonThickness, 15, wallCannonThickness]}
+        receiveShadow
       />
       <Plane
         uuid={uuid}
@@ -65,6 +75,7 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         rotation={[0, -Math.PI / 2, 0]}
         args={[mapHeight, 1, wallThreeThickness]}
         cannonArgs={[mapHeight + wallCannonThickness, 15, wallCannonThickness]}
+        receiveShadow
       />
     </>
   )

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useFrame } from '@react-three/fiber'
-import { MeshWobbleMaterial, Sphere } from '@react-three/drei'
+import { Icosahedron, MeshWobbleMaterial } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
 
 import { lerp } from '../utils'
@@ -27,27 +27,9 @@ export function WanderEnemy(props) {
 
   return (
     <group ref={ref} dispose={null} uuid={props.uuid}>
-      <Sphere args={[0.4]} castShadow receiveShadow>
-        <MeshWobbleMaterial color="red" speed={5} factor={50} />
-        <pointLight
-          position={[-0.75, 0, 0]}
-          intensity={1}
-          color="red"
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-          distance={2}
-          decay={2}
-        />
-        <pointLight
-          position={[0.75, 0, 0]}
-          intensity={1}
-          color="red"
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-          distance={2}
-          decay={2}
-        />
-      </Sphere>
+      <Icosahedron args={[0.4, 0]} castShadow receiveShadow>
+        <MeshWobbleMaterial color="red" speed={5} factor={30} />
+      </Icosahedron>
     </group>
   )
 }

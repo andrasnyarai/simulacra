@@ -4,14 +4,16 @@ import { useSphere } from '@react-three/cannon'
 import { useSpring, animated } from '@react-spring/three'
 
 import { BLACK_HOLE_GROUP, FLOOR_GROUP, PLAYER_GROUP } from '../constants'
+import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 const AnimatedMeshDistortMaterial = animated(MeshDistortMaterial)
 
-export function BlackHole({ isOpen, ...props }) {
+export function BlackHole(props) {
+  const { levelColor, isGateOpen } = useStore((state) => state)
   const { scale, intensity } = useSpring({
-    scale: isOpen ? 1 : 0,
-    intensity: isOpen ? 5 : 0,
+    scale: isGateOpen ? 1 : 0,
+    intensity: isGateOpen ? 5 : 0,
     config: { bounce: 5, duration: 1000 },
   })
 
@@ -36,7 +38,7 @@ export function BlackHole({ isOpen, ...props }) {
   }))
 
   useEffect(() => {
-    if (isOpen) {
+    if (isGateOpen) {
       api.collisionFilterMask.set(FLOOR_GROUP | PLAYER_GROUP)
     } else {
       api.position.set(0, 1, 0)
@@ -44,20 +46,20 @@ export function BlackHole({ isOpen, ...props }) {
       api.collisionFilterMask.set(FLOOR_GROUP)
       setTransitioning(false)
     }
-  }, [isOpen])
+  }, [isGateOpen])
 
   return (
     <group ref={ref} dispose={null} uuid={props.uuid}>
-      <AnimatedSphere args={[1]} scale={scale} castShadow receiveShadow>
+      <AnimatedSphere args={[1]} scale={scale}>
         <AnimatedMeshDistortMaterial color="black" speed={5} distort={distort} radius={radius} />
         <animated.pointLight
           position={[0, 0, 0]}
           intensity={intensity}
-          color="white"
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-          distance={12}
-          decay={2}
+          color={levelColor}
+          distance={20}
+          castShadow
+          shadow-mapSize-height={512 * 2}
+          shadow-mapSize-width={512 * 2}
         />
       </AnimatedSphere>
     </group>

@@ -2,7 +2,6 @@ import React from 'react'
 import { useFrame } from '@react-three/fiber'
 import { MeshWobbleMaterial, Octahedron } from '@react-three/drei'
 import { useSphere, useSpring } from '@react-three/cannon'
-import { animated } from '@react-spring/three'
 
 import { ENEMY_GROUP, ENEMY_MOVEMENT_SPEED } from '../constants'
 import { lerp } from '../utils'
@@ -51,27 +50,11 @@ export const SpinnerEnemy = (props) => {
   return (
     <group>
       <Octahedron args={[0.5, 0]} ref={spinnerCoreRef} uuid={props.coreUuid}>
-        <MeshWobbleMaterial color="red" speed={5} factor={50} />
-        <animated.pointLight
-          position={[0, 0.5, 0]}
-          intensity={5}
-          color="red"
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-          distance={10}
-        />
+        <MeshWobbleMaterial color="red" speed={5} factor={5} />
       </Octahedron>
 
       <Octahedron args={[0.5, 0]} ref={spinnerRef} uuid={props.uuid}>
-        <MeshWobbleMaterial color="red" speed={5} factor={50} />
-        <animated.pointLight
-          position={[0, 0.5, 0]}
-          intensity={5}
-          color="red"
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-          distance={10}
-        />
+        <MeshWobbleMaterial color="red" speed={5} factor={5} />
       </Octahedron>
     </group>
   )

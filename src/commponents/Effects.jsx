@@ -1,28 +1,21 @@
-import React, { useEffect, useMemo, useRef } from 'react'
-import { useFrame, extend, useThree } from '@react-three/fiber'
-import * as THREE from 'three'
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
-import { SavePass } from 'three/examples/jsm/postprocessing/SavePass'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
+import React from 'react'
+import { EffectComposer, Pixelation } from '@react-three/postprocessing'
+import { animated, useSpring } from '@react-spring/three'
 
-extend({ EffectComposer, ShaderPass, SavePass, RenderPass, UnrealBloomPass })
+import { useStore } from '../useStore'
+import { isMobile } from '../utils'
+
+const AnimatedPixelation = animated(Pixelation)
 
 export function Effects() {
-  const { gl, camera, size, scene } = useThree()
-  const composer = useRef()
-  const bloomRef = useRef()
-  const aspect = useMemo(() => new THREE.Vector2(size.width, size.height), [size])
-  useEffect(() => void composer.current.setSize(size.width, size.height), [size])
-  useFrame(() => composer.current.render(), 1)
+  const { isPlayerAlive } = useStore((state) => state)
+  const { granularity } = useSpring({ granularity: isPlayerAlive ? 0 : 17 })
+
+  if (isMobile()) return null
 
   return (
-    <effectComposer ref={composer} args={[gl]}>
-      <renderPass attachArray="passes" scene={scene} camera={camera} />
-      <unrealBloomPass ref={bloomRef} attachArray="passes" args={[aspect, 0.15, 0.15, 0]} />
-      <shaderPass attachArray="passes" args={[FXAAShader]} material-uniforms-resolution-value={[1 / size.width, 1 / size.height]} />
-    </effectComposer>
+    <EffectComposer>
+      <AnimatedPixelation granularity={granularity} />
+    </EffectComposer>
   )
 }

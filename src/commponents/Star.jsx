@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSpring, animated } from '@react-spring/three'
 import { useSphere } from '@react-three/cannon'
-import { Sphere, Trail } from '@react-three/drei'
+import { Sphere } from '@react-three/drei'
 
-import { COLLECTED_STAR_GROUP, FLOOR_GROUP, PLAYER_GROUP, STAR_GROUP } from '../constants'
+import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP } from '../constants'
 import { useFrame } from '@react-three/fiber'
 
 const AnimatedSphere = animated(Sphere)
@@ -55,7 +55,7 @@ export function Star(props) {
 
   return (
     <AnimatedSphere args={[0.4]} ref={ref} dispose={null} scale={scale} castShadow receiveShadow uuid={props.uuid}>
-      <animated.meshPhongMaterial shininess={100} emissive={color} />
+      <animated.meshStandardMaterial shininess={100} emissive={color} />
     </AnimatedSphere>
   )
 }

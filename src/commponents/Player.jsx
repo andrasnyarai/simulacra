@@ -11,11 +11,13 @@ import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
+const initialLightIntensity = 1.5
+
 export function Player(props) {
   const { collectStar, loadNextLevel, isPlayerAlive, looseLife, level } = useStore((state) => state)
   const { camera } = useThree()
 
-  const [lightIntensity, setLightIntensity] = useState(0.5)
+  const [lightIntensity, setLightIntensity] = useState(initialLightIntensity)
   const [isHidden, setIsHidden] = useState(false)
   const { scale, intensity } = useSpring({ scale: isHidden ? 0.1 : 1, intensity: isHidden ? 1 : 0.05 })
 
@@ -61,7 +63,8 @@ export function Player(props) {
   )
 
   useEffect(() => {
-    //  level transition reposition
+    // level transition reposition
+    setLightIntensity(initialLightIntensity)
     api.position.set(0, 0.5, 0)
     api.velocity.set(0, 0, 0)
     api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP)
@@ -72,6 +75,7 @@ export function Player(props) {
   useEffect(() => {
     // respawn
     if (isPlayerAlive && isHidden) {
+      setLightIntensity(initialLightIntensity)
       const [x, , z] = camera.position
       if (level === 0) {
         api.position.set(0, 0.5, 0)
@@ -158,13 +162,7 @@ export function Player(props) {
           <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
             <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
           </AnimatedSphere>
-          <pointLight
-            intensity={lightIntensity}
-            // castShadow
-            shadow-mapSize-height={128}
-            shadow-mapSize-width={128}
-            distance={10}
-          />
+          <pointLight intensity={lightIntensity} distance={20} />
         </group>
       </Trail>
     </>

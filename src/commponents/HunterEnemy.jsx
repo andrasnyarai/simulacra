@@ -9,9 +9,11 @@ import { lerp } from '../utils'
 
 const movementBound = 10 * ENEMY_MOVEMENT_SPEED
 
+const AnimatedMeshWobbleMaterial = animated(MeshWobbleMaterial)
+
 export function HunterEnemy(props) {
   const [isAttacking, setIsAttacking] = useState(false)
-  const { intensity } = useSpring({ intensity: isAttacking ? 15 : 5 })
+  const { factor, color } = useSpring({ factor: isAttacking ? 50 : 5, color: isAttacking ? 'mediumvioletred' : 'red' })
   const [ref, api] = useSphere(() => ({
     args: [0.6],
     mass: 3,
@@ -53,23 +55,7 @@ export function HunterEnemy(props) {
     <group ref={ref} dispose={null} uuid={props.uuid}>
       <mesh ref={fieldRef} uuid={props.fieldUuid} />
       <Dodecahedron args={[0.6, 0]} castShadow receiveShadow>
-        <MeshWobbleMaterial color="red" speed={5} factor={50} />
-        <animated.pointLight
-          position={[-0.75, 0, 0]}
-          intensity={intensity}
-          color="red"
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-          distance={10}
-        />
-        <animated.pointLight
-          position={[0.75, 0, 0]}
-          intensity={intensity}
-          color="red"
-          shadow-mapSize-height={512}
-          shadow-mapSize-width={512}
-          distance={10}
-        />
+        <AnimatedMeshWobbleMaterial speed={5} factor={factor} color={color} />
       </Dodecahedron>
     </group>
   )

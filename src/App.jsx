@@ -1,7 +1,7 @@
 import React from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Stars as StarsBackground, OrbitControls } from '@react-three/drei'
-import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
+import { Stars as StarsBackground } from '@react-three/drei'
+import { Physics, useContactMaterial } from '@react-three/cannon'
 
 import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL } from './constants'
 import { isMobile, lerp } from './utils'
@@ -31,13 +31,6 @@ function calculateStartingPosition(mapWidth, mapHeight, startOffset) {
   return { x, z }
 }
 
-function ContactMaterials() {
-  useContactMaterial(PLANE_MATERIAL, PLAYER_MATERIAL)
-  useContactMaterial(PLANE_MATERIAL, ENEMY_MATERIAL)
-
-  return null
-}
-
 const Stars = React.memo(({ mapWidth, mapHeight, level, count }) => {
   return (
     <>
@@ -45,7 +38,7 @@ const Stars = React.memo(({ mapWidth, mapHeight, level, count }) => {
         const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
         const speed = lerp(Math.random(), 1, 6)
 
-        return <Star key={`star-${i}-${level}`} position={[x, 3, z]} uuid={`star-${i}-${level}`} speed={speed} />
+        return <Star key={`star-${i}-${level}`} position={[x, 5, z]} uuid={`star-${i}-${level}`} speed={speed} />
       })}
     </>
   )
@@ -105,62 +98,60 @@ const SpinnerEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
   )
 })
 
-export default function App() {
-  const {
-    level,
-    lives,
-    isGateOpen,
-    levelColor,
-    mapWidth,
-    mapHeight,
-    starCount,
-    collectedStarsOnLevel,
-    obstacleCount,
-    wanderEnemyCount,
-    hunterEnemyCount,
-    spinnerEnemyCount,
-    isPlayerAlive,
-  } = useStore((state) => state)
+const Scene = () => {
+  const { level, levelColor, mapWidth, mapHeight, starCount, obstacleCount, wanderEnemyCount, hunterEnemyCount, spinnerEnemyCount } =
+    useStore((state) => state)
+
+  useContactMaterial(PLANE_MATERIAL, PLAYER_MATERIAL)
+  useContactMaterial(PLANE_MATERIAL, ENEMY_MATERIAL)
 
   return (
     <>
-      <div style={{ position: 'absolute', color: 'white', zIndex: 1, fontSize: 20 }}>
-        ⭐{collectedStarsOnLevel}/{starCount} ❤️{lives} 🗺️{level + 1}
-      </div>
+      <scene key={level}>
+        <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
+      </scene>
+
+      <Player position={[0, 0, 0]} uuid={`player`} />
+      <BlackHole position={[0, 1, 0]} uuid={`black-hole`} />
+
+      <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
+      <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
+
+      <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
+      <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
+      <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
+    </>
+  )
+}
+
+function Ui() {
+  const { lives, starCount, collectedStarsOnLevel } = useStore((state) => state)
+  return (
+    <div style={{ position: 'absolute', color: 'white', zIndex: 1 }}>
+      ♡{lives} ☆{collectedStarsOnLevel}/{starCount}
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <>
+      <Ui />
       <Canvas
-        dpr={1}
-        camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }}
         shadows
+        dpr={window.devicePixelRatio}
+        camera={{ fov: isMobile() ? 30 : 25, position: [0, 40, 0] }}
         onCreated={(state) => state.gl.setClearColor('black')}
       >
         <StarsBackground />
-        {/* <OrbitControls /> */}
 
         <Physics gravity={[0, -10, 0]}>
-          {/* <Debug scale={1.1}> */}
-          <ContactMaterials />
-
-          <scene key={level}>
-            <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
-          </scene>
-
-          <Player position={[0, 1, 0]} uuid={`player`} />
-          <BlackHole position={[0, 1, 0]} uuid={`black-hole`} isOpen={isGateOpen} />
-
-          <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
-          <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
-
-          <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
-          <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />
-          <SpinnerEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={spinnerEnemyCount} />
-
-          {/*  dont pass down you can have it inside the compontn `isGateOpen` */}
-
-          {/* </scene> */}
-          {/* </Debug> */}
+          <Scene />
         </Physics>
+
         <Menu />
-        {/* <Effects /> */}
+
+        <Effects />
       </Canvas>
     </>
   )
