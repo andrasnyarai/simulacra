@@ -5,13 +5,15 @@ import { Sphere } from '@react-three/drei'
 
 import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP } from '../constants'
 import { useFrame } from '@react-three/fiber'
+import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
 export function Star(props) {
+  const { isPlayerAlive } = useStore((state) => state)
   const [collected, setCollected] = useState(false)
   const { scale, color } = useSpring({
-    scale: collected ? 0.1 : 1,
+    scale: collected ? props.speed * 0.02 : 1,
     color: collected ? 'white' : 'orange',
     config: { mass: 1, tension: 280, friction: 60 },
   })
@@ -41,7 +43,7 @@ export function Star(props) {
   }, [])
 
   useFrame(({ camera }) => {
-    if (collected) {
+    if (collected && isPlayerAlive) {
       const [ax, ay, az] = position.current
       const [bx, by, bz] = camera.position
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Sphere, Trail, MeshDistortMaterial } from '@react-three/drei'
+import { Sphere, MeshDistortMaterial } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
 import { useSpring, animated } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
@@ -154,27 +154,15 @@ export function Player(props) {
   return (
     <>
       <animated.ambientLight intensity={intensity} color="white" />
-      <Trail
-        width={2}
-        color="white"
-        length={1.5}
-        decay={1}
-        local={false}
-        stride={0}
-        interval={1}
-        target={undefined}
-        attenuation={(width) => width}
-      >
-        <group ref={ref} uuid={props.uuid} dispose={null}>
-          <AnimatedSphere args={[0.5]} scale={shieldScale}>
-            <MeshDistortMaterial emissive="white" wireframe speed={5} distort={0.5} radius={1} />
-          </AnimatedSphere>
-          <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
-            <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
-          </AnimatedSphere>
-          <pointLight intensity={lightIntensity} distance={20} />
-        </group>
-      </Trail>
+      <group ref={ref} uuid={props.uuid} dispose={null}>
+        <AnimatedSphere args={[0.5]} scale={shieldScale}>
+          <MeshDistortMaterial emissive="white" wireframe speed={5} distort={0.5} radius={1} />
+        </AnimatedSphere>
+        <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
+          <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
+        </AnimatedSphere>
+        <pointLight intensity={lightIntensity} distance={20} />
+      </group>
     </>
   )
 }
