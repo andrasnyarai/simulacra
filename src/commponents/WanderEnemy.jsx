@@ -28,7 +28,7 @@ export function WanderEnemy(props) {
   return (
     <group ref={ref} dispose={null} uuid={props.uuid}>
       <Icosahedron args={[0.4, 0]} castShadow receiveShadow>
-        <MeshWobbleMaterial color="red" speed={5} factor={30} />
+        <MeshWobbleMaterial color="red" speed={5} factor={5} />
       </Icosahedron>
     </group>
   )
