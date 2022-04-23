@@ -21,7 +21,7 @@ export function Player(props) {
 
   const [lightIntensity, setLightIntensity] = useState(initialLightIntensity)
   const [isHidden, setIsHidden] = useState(false)
-  const size = map(collectedStarsOnLevel, [0, starCount * WIN_THRESHOLD], [0.2, 1])
+  const size = starCount === 0 ? 1 : map(collectedStarsOnLevel, [0, starCount * WIN_THRESHOLD], [0.2, 1])
   const { scale, shieldScale, intensity } = useSpring({
     shieldScale: isHidden ? 0.1 : 1,
     scale: isHidden ? 0.1 : Math.min(size, 1),
