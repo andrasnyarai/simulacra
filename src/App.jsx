@@ -22,7 +22,7 @@ const Stars = React.memo(({ mapWidth, mapHeight, level, count }) => {
     <>
       {[...new Array(count)].map((_, i) => {
         const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
-        const speed = lerp(Math.random(), 1, 20)
+        const speed = lerp(Math.random(), 5, 20)
 
         return <Star key={`star-${i}-${level}`} position={[x, 5, z]} uuid={`star-${i}-${level}`} speed={speed} />
       })}
