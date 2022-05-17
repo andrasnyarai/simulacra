@@ -28,6 +28,9 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
   const wallThreeThickness = 0.1
   const wallCannonThickness = 5
 
+  const floorThreeThickness = 0.1
+  const floorCannonThickness = 5
+
   const uuid = `terrain-${level}`
 
   const respawnBlock = useRef(false)
@@ -52,8 +55,10 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         }}
         color={color}
         position={[0, 0, 0]}
+        cannonPosition={[0, -floorCannonThickness / 2 + floorThreeThickness / 2, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
-        args={[mapWidth, mapHeight, 0.1]}
+        args={[mapWidth, mapHeight, floorThreeThickness]}
+        cannonArgs={[mapWidth, mapHeight, floorCannonThickness]}
         receiveShadow
       />
 
