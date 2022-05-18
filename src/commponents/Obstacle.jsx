@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { Box } from '@react-three/drei'
 import { useBox } from '@react-three/cannon'
 
@@ -9,13 +9,10 @@ export function Obstacle({ size, ...props }) {
   const [ref, api] = useBox(() => ({
     args: [size, size, size],
     mass: map(size, [1, 3], [0.1, 50]),
+    rotation: [0, lerp(Math.random(), -45, 45), 0],
     collisionFilterGroup: OBSTACLE_GROUP,
     ...props,
   }))
-
-  useEffect(() => {
-    api.applyTorque([lerp(Math.random(), -50, 50), lerp(Math.random(), -50, 50), lerp(Math.random(), -50, 50)])
-  }, [])
 
   return (
     <group ref={ref} uuid={props.uuid}>

@@ -4,7 +4,7 @@ import { Stars as StarsBackground } from '@react-three/drei'
 import { Physics, useContactMaterial } from '@react-three/cannon'
 
 import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL } from './constants'
-import { isMobile, lerp, calculateStartingPosition } from './utils'
+import { isMobile, lerp, calculateStartingPosition, calculateStartingPositions } from './utils'
 import { useStore } from './useStore'
 import { Terrain } from './commponents/Terrain'
 import { Player } from './commponents/Player'
@@ -17,28 +17,27 @@ import { BlackHole } from './commponents/BlackHole'
 import { Effects } from './commponents/Effects'
 import { Menu } from './commponents/Menu'
 
-const Stars = React.memo(({ mapWidth, mapHeight, level, count }) => {
+const ObstaclesAndStars = React.memo(({ mapWidth, mapHeight, level, starCount, obstacleCount }) => {
+  const objectDefinitions = [...new Array(obstacleCount)]
+    .map(() => ({ type: 'OBSTACLE' }))
+    .concat([...new Array(starCount)].map(() => ({ type: 'STAR' })))
+
+  const positions = calculateStartingPositions(objectDefinitions, mapWidth, mapHeight)
+
   return (
     <>
-      {[...new Array(count)].map((_, i) => {
-        const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 2)
-        const speed = lerp(Math.random(), 5, 20)
+      {positions
+        .filter(({ type }) => type === 'STAR')
+        .map(({ position: { x, z }, size }, i) => {
+          const speed = lerp(Math.random(), 5, 20)
 
-        return <Star key={`star-${i}-${level}`} position={[x, 5, z]} uuid={`star-${i}-${level}`} speed={speed} />
-      })}
-    </>
-  )
-})
-
-const Obstacles = React.memo(({ mapWidth, mapHeight, level, count }) => {
-  return (
-    <>
-      {[...new Array(count)].map((_, i) => {
-        const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 3)
-        const size = lerp(Math.random(), 1, 3)
-
-        return <Obstacle key={`obstacle-${i}-${level}`} position={[x, size, z]} uuid={`obstacle-${i}-${level}`} size={size} />
-      })}
+          return <Star key={`star-${i}-${level}`} position={[x, 1, z]} uuid={`star-${i}-${level}`} speed={speed} size={size} />
+        })}
+      {positions
+        .filter(({ type }) => type === 'OBSTACLE')
+        .map(({ position: { x, z }, size }, i) => {
+          return <Obstacle key={`obstacle-${i}-${level}`} position={[x, size, z]} uuid={`obstacle-${i}-${level}`} size={size} />
+        })}
     </>
   )
 })
@@ -50,7 +49,7 @@ const WanderEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
         const { x, z } = calculateStartingPosition(mapWidth, mapHeight, 5)
         const uuid = `wander-enemy-${i}-${level}`
 
-        return <WanderEnemy key={uuid} position={[x, 2, z]} uuid={uuid} />
+        return <WanderEnemy key={uuid} position={[x, 4, z]} uuid={uuid} />
       })}
     </>
   )
@@ -64,7 +63,7 @@ const HunterEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
         const uuid = `hunter-enemy-${i}-${level}`
         const fieldUuid = `hunter-field-${i}-${level}`
 
-        return <HunterEnemy key={uuid} position={[x, 2, z]} uuid={uuid} fieldUuid={fieldUuid} />
+        return <HunterEnemy key={uuid} position={[x, 4, z]} uuid={uuid} fieldUuid={fieldUuid} />
       })}
     </>
   )
@@ -78,7 +77,7 @@ const SpinnerEnemies = React.memo(({ mapWidth, mapHeight, level, count }) => {
         const uuid = `spinner-enemy-${i}-${level}`
         const coreUuid = `spinner-enemy-core-${i}-${level}`
 
-        return <SpinnerEnemy key={uuid} position={[x, 2, z]} uuid={uuid} coreUuid={coreUuid} />
+        return <SpinnerEnemy key={uuid} position={[x, 4, z]} uuid={uuid} coreUuid={coreUuid} />
       })}
     </>
   )
@@ -108,8 +107,7 @@ const Scene = () => {
       <Player position={playerPosition} uuid={`player`} />
       <BlackHole position={[0, 1, 0]} uuid={`black-hole`} />
 
-      <Stars mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={starCount} />
-      <Obstacles mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={obstacleCount} />
+      <ObstaclesAndStars mapHeight={mapHeight} mapWidth={mapWidth} level={level} obstacleCount={obstacleCount} starCount={starCount} />
 
       <WanderEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={wanderEnemyCount} />
       <HunterEnemies mapHeight={mapHeight} mapWidth={mapWidth} level={level} count={hunterEnemyCount} />

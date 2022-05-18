@@ -9,7 +9,7 @@ import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
-export function Star(props) {
+export function Star({ size, ...props }) {
   const { isPlayerAlive } = useStore((state) => state)
   const [collected, setCollected] = useState(false)
   const { scale, color } = useSpring({
@@ -19,7 +19,7 @@ export function Star(props) {
   })
 
   const [ref, api] = useSphere(() => ({
-    args: [0.4],
+    args: [size],
     mass: 0.00001,
     ...props,
     collisionFilterGroup: STAR_GROUP,
@@ -56,7 +56,7 @@ export function Star(props) {
   })
 
   return (
-    <AnimatedSphere args={[0.4]} ref={ref} dispose={null} scale={scale} castShadow receiveShadow uuid={props.uuid}>
+    <AnimatedSphere args={[size]} ref={ref} dispose={null} scale={scale} castShadow receiveShadow uuid={props.uuid}>
       <animated.meshStandardMaterial shininess={100} emissive={color} />
     </AnimatedSphere>
   )

@@ -6,7 +6,7 @@ import { useSpring, animated } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
 
 import { isMobile, map, useKeyPress } from '../utils'
-import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL, WIN_THRESHOLD } from '../constants'
+import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL } from '../constants'
 import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
@@ -21,7 +21,7 @@ export function Player(props) {
 
   const [lightIntensity, setLightIntensity] = useState(initialLightIntensity)
   const [isHidden, setIsHidden] = useState(false)
-  const size = starCount === 0 ? 1 : map(collectedStarsOnLevel, [0, starCount * WIN_THRESHOLD], [0.2, 1])
+  const size = starCount === 0 ? 1 : map(collectedStarsOnLevel, [0, starCount], [0.2, 1])
   const { scale, shieldScale, intensity } = useSpring({
     shieldScale: isHidden ? 0.1 : 1,
     scale: isHidden ? 0.1 : Math.min(size, 1),
