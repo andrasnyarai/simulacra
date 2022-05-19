@@ -29,7 +29,7 @@ export function calculateStartingPosition(mapWidth, mapHeight, offsetFromCenter,
   return { x, z }
 }
 
-export function calculateStartingPositions(objectDefinitions, mapWidth, mapHeight) {
+export function calculateNonOverlappingPositions(objectDefinitions, mapWidth, mapHeight) {
   const obstacleDefinitions = objectDefinitions.filter(({ type }) => type === 'OBSTACLE')
   const obstaclePositions = []
   while (obstaclePositions.length < obstacleDefinitions.length) {

@@ -4,7 +4,7 @@ import { Stars as StarsBackground } from '@react-three/drei'
 import { Physics, useContactMaterial } from '@react-three/cannon'
 
 import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL } from './constants'
-import { isMobile, lerp, calculateStartingPosition, calculateStartingPositions } from './utils'
+import { isMobile, lerp, calculateStartingPosition, calculateNonOverlappingPositions } from './utils'
 import { useStore } from './useStore'
 import { Terrain } from './commponents/Terrain'
 import { Player } from './commponents/Player'
@@ -22,7 +22,7 @@ const ObstaclesAndStars = React.memo(({ mapWidth, mapHeight, level, starCount, o
     .map(() => ({ type: 'OBSTACLE' }))
     .concat([...new Array(starCount)].map(() => ({ type: 'STAR' })))
 
-  const positions = calculateStartingPositions(objectDefinitions, mapWidth, mapHeight)
+  const positions = calculateNonOverlappingPositions(objectDefinitions, mapWidth, mapHeight)
 
   return (
     <>
