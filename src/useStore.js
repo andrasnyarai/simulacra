@@ -167,11 +167,11 @@ const levels = [
 ]
 
 const endLevel = {
-  mapHeight: 10,
-  mapWidth: 10,
+  mapHeight: 15,
+  mapWidth: 15,
   levelColor: 'black',
   starCount: 0,
-  obstacleCount: 5,
+  obstacleCount: 1,
   wanderEnemyCount: 0,
   hunterEnemyCount: 0,
   spinnerEnemyCount: 0,
