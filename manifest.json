@@ -7,9 +7,8 @@
   "description": "arcade physics game",
   "icons": [
     {
-      "src": "https://game.spreadbow.com/simulacra.png",
-      "sizes": "any",
-      "purpose": "maskable any"
+      "src": "https://game.spreadbow.com/simulacra-square.png",
+      "sizes": "any"
     }
   ]
 }
