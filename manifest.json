@@ -4,5 +4,11 @@
   "start_url": ".",
   "display": "standalone",
   "background_color": "#000",
-  "description": "arcade physics game"
+  "description": "arcade physics game",
+  "icons": [
+    {
+      "src": "src/favicon.svg",
+      "sizes": "any"
+    }
+  ]
 }
