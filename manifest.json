@@ -7,7 +7,7 @@
   "description": "arcade physics game",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "https://game.spreadbow.com/favicon.svg",
       "sizes": "any"
     }
   ]
