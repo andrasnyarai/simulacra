@@ -1,0 +1,8 @@
+{
+  "name": "Simulacra",
+  "short_name": "simulacra",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000",
+  "description": "arcade physics game"
+}
