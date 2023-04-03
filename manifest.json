@@ -1,13 +1,13 @@
 {
   "name": "Simulacra",
   "short_name": "simulacra",
-  "start_url": "/index.html",
+  "start_url": "https://game.spreadbow.com/index.html",
   "display": "standalone",
   "background_color": "#000",
   "description": "arcade physics game",
   "icons": [
     {
-      "src": "/simulacra.png",
+      "src": "https://game.spreadbow.com/simulacra.png",
       "sizes": "any"
     }
   ]
