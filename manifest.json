@@ -7,7 +7,7 @@
   "description": "arcade physics game",
   "icons": [
     {
-      "src": "src/favicon.svg",
+      "src": "public/favicon.svg",
       "sizes": "any"
     }
   ]
