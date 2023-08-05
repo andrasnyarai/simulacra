@@ -4,4 +4,4 @@
 
 3d physics arcade game.
 
-To collect the stars of the void visit: [simulacra.tv](https://simulacra.tv)
+Go Collect the stars of the [void](https://simulacra.tv)!
