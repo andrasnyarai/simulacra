@@ -11,7 +11,7 @@ import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
-const initialLightIntensity = 1.5
+const initialLightIntensity = 9.5
 
 export function Player(props) {
   const { playerPosition, collectStar, collectedStarsOnLevel, starCount, loadNextLevel, isPlayerAlive, looseLife, level, poweredUp, setPoweredUp } = useStore(
@@ -187,7 +187,7 @@ export function Player(props) {
         <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
           <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
         </AnimatedSphere>
-        <pointLight intensity={lightIntensity} distance={20} />
+        <pointLight intensity={lightIntensity} distance={40} />
       </group>
     </>
   )

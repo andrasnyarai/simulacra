@@ -13,7 +13,7 @@ export function BlackHole(props) {
   const { levelColor, isGateOpen } = useStore((state) => state)
   const { scale, intensity } = useSpring({
     scale: isGateOpen ? 1 : 0,
-    intensity: isGateOpen ? 150 : 0, // Increased from 20 to 150
+    intensity: isGateOpen ? 250 : 0, // Increased from 20 to 150
     config: { bounce: 5, duration: 1000 },
   })
 
@@ -57,8 +57,10 @@ export function BlackHole(props) {
           distort={distort} 
           radius={radius}
           emissive={levelColor}
-          emissiveIntensity={0.3} // Even lower emissive
+          emissiveIntensity={0.2} // Even lower emissive
           metalness={0.9}
+          transparent
+          opacity={0.9}
         />
         <animated.pointLight
           position={[0, 0, 0]}
