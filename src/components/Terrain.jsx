@@ -17,7 +17,7 @@ function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, on
 
   return (
     <Box args={args} position={position} rotation={rotation} uuid={props.uuid} castShadow receiveShadow onClick={onClick}>
-      <meshStandardMaterial color={color} opacity={0.5} transparent />
+      <meshStandardMaterial color={color} opacity={0.4} transparent />
     </Box>
   )
 }
