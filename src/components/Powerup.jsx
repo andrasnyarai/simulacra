@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSpring, animated } from '@react-spring/three'
 import { useSphere } from '@react-three/cannon'
-import { Sphere } from '@react-three/drei'
+import { Sphere, Icosahedron, MeshWobbleMaterial } from '@react-three/drei'
 
 import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP } from '../constants'
 import { useFrame } from '@react-three/fiber'
@@ -9,12 +9,13 @@ import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
-export function Star({ size, color = 'orange', ...props }) {
-  const { isPlayerAlive } = useStore((state) => state)
+export function Powerup({ size = 0.6, color = 'deepskyblue', onCollect, ...props }) {
+  const { isPlayerAlive, setPoweredUp } = useStore((state) => state)
   const [collected, setCollected] = useState(false)
-  const { scale, animatedColor } = useSpring({
-    scale: collected ? props.speed * 0.02 : 1,
+  const { scale, animatedColor, glow } = useSpring({
+    scale: collected ? 0.5 : 1,
     animatedColor: collected ? 'white' : color,
+    glow: collected ? 2 : 1.2,
     config: { mass: 1, tension: 280, friction: 60 },
   })
 
@@ -26,11 +27,11 @@ export function Star({ size, color = 'orange', ...props }) {
     onCollide: ({ contact }) => {
       if (contact.bi.uuid.includes('player')) {
         setCollected(true)
-
+        setPoweredUp(true)
         api.collisionFilterMask.set(FLOOR_GROUP)
         api.collisionFilterGroup.set(COLLECTED_STAR_GROUP)
         api.velocity.set(...contact.ri.map((n) => n * -10))
-
+        if (onCollect) onCollect()
         setTimeout(() => api.collisionFilterMask.set(null), 200)
       }
     },
@@ -43,21 +44,33 @@ export function Star({ size, color = 'orange', ...props }) {
   }, [])
 
   useFrame(({ camera }) => {
+    
+    const speed = 20
+    
     if (collected && isPlayerAlive) {
       const [ax, ay, az] = position.current
       const [bx, by, bz] = camera.position
-
       const dx = bx - ax
       const dy = by - ay
       const dz = bz - az
-
-      api.velocity.set(dx * props.speed, (dy - 40) * props.speed, dz * props.speed)
+      api.velocity.set(dx * speed, (dy - 40) * speed, dz * speed)
     }
   })
 
   return (
-    <AnimatedSphere args={[size]} ref={ref} dispose={null} scale={scale} castShadow receiveShadow uuid={props.uuid}>
-      <animated.meshStandardMaterial shininess={100} emissive={animatedColor} />
-    </AnimatedSphere>
+    <animated.group ref={ref} scale={scale} dispose={null} uuid={props.uuid}>
+      <Icosahedron args={[size, 0]} castShadow receiveShadow>
+        <animated.meshStandardMaterial
+          color={animatedColor}
+          emissive={animatedColor}
+          emissiveIntensity={glow}
+          metalness={0.7}
+          roughness={0.2}
+        />
+      </Icosahedron>
+      <Icosahedron args={[size * 1.15, 0]}>
+        <meshBasicMaterial color={animatedColor} transparent opacity={0.25} wireframe />
+      </Icosahedron>
+    </animated.group>
   )
-}
+} 

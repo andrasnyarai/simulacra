@@ -11,6 +11,7 @@ export const COLLECTED_STAR_GROUP = 4
 export const ENEMY_GROUP = 5
 export const OBSTACLE_GROUP = 6
 export const BLACK_HOLE_GROUP = 7
+export const PROJECTILE_GROUP = 8
 
 export const ENEMY_MOVEMENT_SPEED = isMobile() ? 0.75 : 1
 

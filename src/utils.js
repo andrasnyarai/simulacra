@@ -29,6 +29,12 @@ export function calculateStartingPosition(mapWidth, mapHeight, offsetFromCenter,
   return { x, z }
 }
 
+/**
+ * Calculates random, non-overlapping positions and sizes for obstacles and stars on a map.
+ * Obstacles are placed first, ensuring they do not overlap with each other.
+ * Stars are then placed, ensuring they do not overlap with each other or with any obstacle.
+ * Returns an array of objects (obstacles and stars) with assigned positions and sizes.
+ */
 export function calculateNonOverlappingPositions(objectDefinitions, mapWidth, mapHeight) {
   const obstacleDefinitions = objectDefinitions.filter(({ type }) => type === 'OBSTACLE')
   const obstaclePositions = []
@@ -86,4 +92,94 @@ export function useKeyPress(targetKey) {
     }
   }, [])
   return keyPressed
+}
+
+/**
+ * Runs the enemy explosion animation sequence using a react-spring API.
+ * @param {SpringApi} api - The spring API from useSpring.
+ * @param {string} color - The base color to reset to.
+ * @returns {Promise<void>}
+ */
+export async function runExplosionSpring(api, color) {
+  await api.start({ color: '#fff', emissive: '#fff', emissiveIntensity: 2, config: { duration: 200 } });
+  await api.start({ opacity: 0,  config: { duration: 200 } });
+}
+
+// Generate a visually distinct random color
+export function randomColor({s=70, l=55, hRange=[0,360]} = {}) {
+  // HSL to hex
+  const h = Math.floor(Math.random() * (hRange[1] - hRange[0]) + hRange[0])
+  return hslToHex(h, s, l)
+}
+
+export function randomDarkColor() {
+  // Lower lightness, full saturation
+  return randomColor({ s: 60 + Math.random() * 20, l: 12 + Math.random() * 18 })
+}
+
+export function randomNeonColor() {
+  // High saturation, mid-high lightness
+  return randomColor({ s: 90 + Math.random() * 10, l: 50 + Math.random() * 10 })
+}
+
+export function randomPastelColor() {
+  // Lower saturation, high lightness
+  return randomColor({ s: 40 + Math.random() * 20, l: 70 + Math.random() * 10 })
+}
+
+export function randomWhiteYellowColor() {
+  // H: 40-60 (yellow) or 0-40 (white to yellow), high lightness
+  const h = Math.random() < 0.5 ? Math.floor(Math.random() * 40) : 40 + Math.floor(Math.random() * 20)
+  return randomColor({ hRange: [h, h+1], s: 20 + Math.random() * 30, l: 85 + Math.random() * 10 })
+}
+
+export function randomBluishColor() {
+  // H: 200-250 (blue/cyan), moderate to high saturation
+  return randomColor({ hRange: [200, 250], s: 60 + Math.random() * 30, l: 40 + Math.random() * 20 })
+}
+
+export function randomReddishColor() {
+  // H: 0-20 (red) or 340-360 (magenta-red), high saturation
+  const h = Math.random() < 0.5 ? Math.floor(Math.random() * 20) : 340 + Math.floor(Math.random() * 20)
+  return randomColor({ hRange: [h, h+1], s: 80 + Math.random() * 20, l: 45 + Math.random() * 15 })
+}
+
+function hslToHex(h, s, l) {
+  s /= 100;
+  l /= 100;
+  let c = (1 - Math.abs(2 * l - 1)) * s,
+    x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
+    m = l - c / 2,
+    r = 0,
+    g = 0,
+    b = 0;
+  if (0 <= h && h < 60) {
+    r = c;
+    g = x;
+    b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x;
+    g = c;
+    b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0;
+    g = c;
+    b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0;
+    g = x;
+    b = c;
+  } else if (240 <= h && h < 300) {
+    r = x;
+    g = 0;
+    b = c;
+  } else if (300 <= h && h < 360) {
+    r = c;
+    g = 0;
+    b = x;
+  }
+  r = Math.round((r + m) * 255);
+  g = Math.round((g + m) * 255);
+  b = Math.round((b + m) * 255);
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }

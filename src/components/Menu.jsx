@@ -4,7 +4,7 @@ import { Box, Extrude, Text } from '@react-three/drei'
 import { animated, useSpring } from '@react-spring/three'
 import { Shape } from 'three'
 
-import { useStore, allStarCount } from '../useStore'
+import { useStore } from '../useStore'
 import { RESPAWN_BLOCK_MS } from '../constants'
 
 const AnimatedBox = animated(Box)
@@ -34,7 +34,7 @@ function Heart(props) {
 }
 
 export function Menu() {
-  const { isPlayerAlive, levelColor, lives, isGameOver, isGameFinished, collectedStars } = useStore((state) => state)
+  const { isPlayerAlive, levelColor, lives, isGameOver, isGameFinished, collectedStars, regeneratePalettes } = useStore((state) => state)
   const { camera } = useThree()
   const { scale } = useSpring({
     scale: isPlayerAlive ? 1 : 0,
@@ -49,14 +49,20 @@ export function Menu() {
           Thanks for playing
         </Text>
         <Text scale={[5, 5, 5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 30, 1]}>
-          {collectedStars}/{allStarCount}
+          Stars collected: {collectedStars}
         </Text>
       </group>
     )
   }
 
+  function handleRestart() {
+    if (isGameOver) {
+      regeneratePalettes()
+    }
+  }
+
   return (
-    <group position={[x, 40, z]} rotation={[-Math.PI / 2, 0, 0]}>
+    <group position={[x, 40, z]} rotation={[-Math.PI / 2, 0, 0]} onClick={handleRestart}>
       {!isPlayerAlive && (
         <AnimatedBox args={[1, 0.01, 0.1]} scale={scale.to((n) => [n, 1, 1])} position={[0, 0.075, 0]}>
           <meshBasicMaterial color="white" />
