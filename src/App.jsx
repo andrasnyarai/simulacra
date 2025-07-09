@@ -216,6 +216,7 @@ const Scene = () => {
 
   return (
     <Suspense fallback={null}>
+
       <Terrain mapWidth={mapWidth} mapHeight={mapHeight} color={levelColor} level={level} />
 
       <Player position={playerPosition} uuid={`player`} />

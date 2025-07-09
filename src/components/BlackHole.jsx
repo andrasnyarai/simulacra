@@ -13,7 +13,7 @@ export function BlackHole(props) {
   const { levelColor, isGateOpen } = useStore((state) => state)
   const { scale, intensity } = useSpring({
     scale: isGateOpen ? 1 : 0,
-    intensity: isGateOpen ? 5 : 0,
+    intensity: isGateOpen ? 150 : 0, // Increased from 20 to 150
     config: { bounce: 5, duration: 1000 },
   })
 
@@ -51,12 +51,20 @@ export function BlackHole(props) {
   return (
     <group ref={ref} dispose={null} uuid={props.uuid}>
       <AnimatedSphere args={[1]} scale={scale}>
-        <AnimatedMeshDistortMaterial color="black" speed={5} distort={distort} radius={radius} />
+        <AnimatedMeshDistortMaterial 
+          color="black" 
+          speed={5} 
+          distort={distort} 
+          radius={radius}
+          emissive={levelColor}
+          emissiveIntensity={0.3} // Even lower emissive
+          metalness={0.9}
+        />
         <animated.pointLight
           position={[0, 0, 0]}
           intensity={intensity}
           color={levelColor}
-          distance={20}
+          distance={120} // Increased from 40 to 120
           castShadow
           shadow-mapSize-height={512 * 2}
           shadow-mapSize-width={512 * 2}
