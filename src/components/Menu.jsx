@@ -45,10 +45,10 @@ export function Menu() {
   if (isGameFinished) {
     return (
       <group>
-        <Text scale={[5, 5, 5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 30, 0]}>
+        <Text scale={[2, 2, 2]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 30, 0]}>
           Thanks for playing
         </Text>
-        <Text scale={[5, 5, 5]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 30, 1]}>
+        <Text scale={[2, 2, 2]} color="white" rotation={[-Math.PI / 2, 0, 0]} position={[0, 30, 1]}>
           Stars collected: {collectedStars}
         </Text>
       </group>
@@ -68,13 +68,13 @@ export function Menu() {
           <meshBasicMaterial color="white" />
         </AnimatedBox>
       )}
-      <Text scale={[1, 1, 1]} color="white">
+      <Text scale={[0.1, 0.1, 0.1]} color="white">
         {!isPlayerAlive && `planet ${levelColor}`}
       </Text>
       <group rotation={[Math.PI, 0, 0]} position={[-0.05, -0.075, 0]}>
         {!isPlayerAlive && <Heart scale={0.001} position={[-0.025, 0, 0.1]} />}
       </group>
-      <Text scale={[0.8, 0.8, 0.8]} color="white" position={[0.05, -0.1, 1]}>
+      <Text scale={[0.1, 0.1, 0.1]} color="white" position={[0.05, -0.1, 1]}>
         {!isPlayerAlive && lives}
       </Text>
 
