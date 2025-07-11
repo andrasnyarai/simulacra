@@ -56,7 +56,7 @@ export function Effects() {
       dirY = dz / speed // Use Z for Y offset for a top-down game
     }
     // Dynamic scale based on speed - higher speed = stronger effect
-    const baseScale = 0.004
+    const baseScale = isMobile() ? 0.01 : 0.004
     const speedMultiplier = Math.min(speed * 2, 3) // cap at 3x for very high speeds
     const dynamicScale = baseScale * speedMultiplier
     const maxOffset = 0.02 // increased max for high speeds

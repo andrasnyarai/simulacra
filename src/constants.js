@@ -49,3 +49,5 @@ export function getRandomPowerupType(rand) {
   // Fallback (should not happen)
   return configs[configs.length - 1].type
 }
+
+// @TODO: this one is wrong it just adds up to one and thats it cant handle overflow of weights!!!!
