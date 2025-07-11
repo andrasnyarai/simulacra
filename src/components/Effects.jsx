@@ -38,10 +38,17 @@ export function Effects() {
     const dx = x - lx
     const dy = y - ly
     const dz = z - lz
-    const speed = Math.sqrt(dx * dx + dy * dy + dz * dz)
+    
+    // Normalize speed calculation: use the maximum of X and Z movement
+    // This ensures diagonal movement has the same intensity as cardinal directions
+    const speedX = Math.abs(dx)
+    const speedZ = Math.abs(dz)
+    const speed = Math.max(speedX, speedZ) // Use max instead of sqrt(dx² + dz²)
+    
     speedRef.current = speed
     movementRef.current = [dx, dy, dz]
     lastCamPos.current = [x, y, z]
+    
     // Normalize direction
     let dirX = 0, dirY = 0
     if (speed > 0.0001) {
@@ -53,8 +60,11 @@ export function Effects() {
     const speedMultiplier = Math.min(speed * 2, 3) // cap at 3x for very high speeds
     const dynamicScale = baseScale * speedMultiplier
     const maxOffset = 0.02 // increased max for high speeds
+    
+    // Fix the color channel issue: invert Y offset to make blue appear ahead for vertical movement
     const offsetX = Math.max(-maxOffset, Math.min(maxOffset, dirX * speed * dynamicScale))
-    const offsetY = Math.max(-maxOffset, Math.min(maxOffset, dirY * speed * dynamicScale))
+    const offsetY = Math.max(-maxOffset, Math.min(maxOffset, -dirY * speed * dynamicScale)) // Inverted Y offset
+    
     chromaApi.start({ chromaOffsetX: offsetX, chromaOffsetY: offsetY })
   })
 
