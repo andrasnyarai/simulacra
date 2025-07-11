@@ -3,7 +3,7 @@ import { useSpring, animated } from '@react-spring/three'
 import { useSphere } from '@react-three/cannon'
 import { Sphere, Icosahedron, MeshWobbleMaterial } from '@react-three/drei'
 
-import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP, POWERUP_TYPES, POWERUP_CONFIGS } from '../constants'
+import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP, POWERUP_CONFIGS } from '../constants'
 import { useFrame } from '@react-three/fiber'
 import { useStore } from '../useStore'
 
@@ -29,7 +29,7 @@ console.log(powerupType, 'powerupType')
       if (contact.bi.uuid.includes('player')) {
         setCollected(true)
         setCurrentPowerup({ type: powerupType })
-        if (powerupType === POWERUP_TYPES.COLLECTOR) {
+        if (powerupType === 'Collector') {
           collectAllStars()
         }
         api.collisionFilterMask.set(FLOOR_GROUP)

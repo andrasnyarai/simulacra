@@ -6,7 +6,7 @@ import { useSpring, animated } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
 
 import { isMobile, map, useKeyPress } from '../utils'
-import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL, PROJECTILE_GROUP, POWERUP_TYPES } from '../constants'
+import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL, PROJECTILE_GROUP } from '../constants'
 import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
@@ -81,7 +81,7 @@ export function Player(props) {
         collectStar()
       }
       if (contact.bj.uuid.includes('powerup')) {
-        setCurrentPowerup({ type: POWERUP_TYPES.DESTROYER })
+        setCurrentPowerup({ type: 'Destroyer' })
       }
     },
   }))

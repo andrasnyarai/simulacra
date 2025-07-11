@@ -17,16 +17,11 @@ export const ENEMY_MOVEMENT_SPEED = isMobile() ? 0.75 : 1
 
 export const RESPAWN_BLOCK_MS = 1000
 
-export const POWERUP_TYPES = {
-  DESTROYER: 'destroyer',
-  COLLECTOR: 'collector',
-  CLEANER: 'cleaner',
-}
-
 export const POWERUP_CONFIGS = {
-  [POWERUP_TYPES.DESTROYER]: { label: 'Destroyer', color: '#66ccff', weight: 0.3 },
-  [POWERUP_TYPES.COLLECTOR]: { label: 'Collector', color: '#ffe066', weight: 0.3 },
-  [POWERUP_TYPES.CLEANER]: { label: 'Cleaner', color: '#00081a', weight: 0.3 },
+  Destroyer: { label: 'Destroyer', color: '#66ccff', weight: 0.3 },
+  Collector: { label: 'Collector', color: '#ffe066', weight: 0.3 },
+  Cleaner: { label: 'Cleaner', color: '#00081a', weight: 0.3 },
+  // Mushroom: { label: 'Mushroom', color: '#00ff00', weight: 0.3 },
 }
 
 /**

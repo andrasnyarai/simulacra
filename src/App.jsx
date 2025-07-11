@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { Stars as StarsBackground } from '@react-three/drei'
 import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
 
-import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL, POWERUP_TYPES } from './constants'
+import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL } from './constants'
 import { isMobile, lerp, calculateStartingPosition, calculateNonOverlappingPositions } from './utils'
 import { useStore } from './useStore'
 import { Terrain } from './components/Terrain'

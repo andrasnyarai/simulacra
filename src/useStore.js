@@ -1,6 +1,6 @@
 import create from 'zustand'
 import { randomColor, randomDarkColor, randomNeonColor, randomPastelColor, randomWhiteYellowColor, randomBluishColor, randomReddishColor } from './utils'
-import { getRandomPowerupType, POWERUP_CONFIGS, POWERUP_TYPES } from './constants'
+import { getRandomPowerupType } from './constants'
 
 // Generate a random color palette with custom generator
 function generatePalette(count, generator) {
@@ -31,9 +31,9 @@ function getLevelConfig(level, palettes) {
   const obstacleCount = Math.max(1, Math.floor(2 + level * 0.7 + Math.random() * 2)) // easier and slower
 
   // Enemies scale up with level, but more slowly and start later
-  const wanderEnemyCount = 1//Math.floor(level / 4) + Math.floor(Math.random() * (difficulty)) // slower
-  const hunterEnemyCount = 1//level > 6 ? Math.floor(level / 8) + Math.floor(Math.random() * (difficulty)) : 0 // start later, slower
-  const shooterEnemyCount = 1//level > 10 ? Math.floor(level / 10) + Math.floor(Math.random() * (difficulty)) : 0 // shooter enemies
+  const wanderEnemyCount = Math.floor(level / 4) + Math.floor(Math.random() * (difficulty)) // slower
+  const hunterEnemyCount = level > 6 ? Math.floor(level / 8) + Math.floor(Math.random() * (difficulty)) : 0 // start later, slower
+  const shooterEnemyCount = level > 10 ? Math.floor(level / 10) + Math.floor(Math.random() * (difficulty)) : 0 // shooter enemies
   // Layout pattern variety
   let layoutPattern = 'default'
   const varietyRoll = Math.random()
@@ -89,8 +89,8 @@ export const useStore = create((set, get) => {
     isGameFinished: false,
     // --- Powerup system ---
     currentPowerup: null, // { type } or null
-    isPoweredUpDestroyer: () => get().currentPowerup?.type === POWERUP_TYPES.DESTROYER,
-    isPoweredUpCollector: () => get().currentPowerup?.type === POWERUP_TYPES.COLLECTOR,
+    isPoweredUpDestroyer: () => get().currentPowerup?.type === 'Destroyer',
+    isPoweredUpCollector: () => get().currentPowerup?.type === 'Collector',
     setCurrentPowerup: (powerup) => set(() => ({ currentPowerup: powerup })),
     clearCurrentPowerup: () => set(() => ({ currentPowerup: null })),
     // ---

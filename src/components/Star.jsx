@@ -55,7 +55,7 @@ export function Star({ size, color = 'orange', ...props }) {
   // console.log(currentPowerup, 'currentPowerupin stars?????')
 
   useEffect(() => {
-    if (currentPowerup?.type === 'collector' && !collected) {
+    if (currentPowerup?.type === 'Collector' && !collected) {
       collectStar({ ri: [0, 0, 0] })
     }
     // eslint-disable-next-line

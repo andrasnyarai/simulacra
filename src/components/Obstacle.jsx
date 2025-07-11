@@ -17,7 +17,7 @@ export function Obstacle({ size, color = '#2326d4', ...props }) {
   }))
 
   useEffect(() => {
-    if (currentPowerup?.type === 'cleaner') {
+    if (currentPowerup?.type === 'Cleaner') {
       // Remove FLOOR_GROUP from collisionFilterGroup
       api.collisionFilterGroup.set(0)
     }
