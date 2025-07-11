@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Icosahedron, MeshWobbleMaterial } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
@@ -7,6 +7,7 @@ import { animated } from '@react-spring/three'
 import { lerp, runExplosionSpring } from '../utils'
 import { ENEMY_MATERIAL, ENEMY_GROUP, ENEMY_MOVEMENT_SPEED } from '../constants'
 import { useEnemyDeathEffect } from './useEnemyDeathEffect'
+import { useStore } from '../useStore'
 
 const movementBound = 7 * ENEMY_MOVEMENT_SPEED
 
@@ -20,7 +21,24 @@ export function WanderEnemy(props) {
     material: ENEMY_MATERIAL,
     collisionFilterGroup: ENEMY_GROUP,
   }))
-  const [spring] = useEnemyDeathEffect(destroyed, color, api)
+  const { poweredUp, powerupColor } = useStore((state) => ({ poweredUp: state.poweredUp, powerupColor: state.powerupColor }))
+  let deathFlashColor = undefined;
+  if (poweredUp && powerupColor && powerupColor.toLowerCase().includes('blue')) {
+    deathFlashColor = '#66ccff';
+  }
+  const [spring] = useEnemyDeathEffect(destroyed, color, api, deathFlashColor)
+
+  useEffect(() => {
+    if (poweredUp && powerupColor) {
+      spring.color.start('white')
+      spring.emissive.start('white')
+      spring.emissiveIntensity.start(1.5)
+    } else {
+      spring.color.start(color)
+      spring.emissive.start(color)
+      spring.emissiveIntensity.start(0.2)
+    }
+  }, [poweredUp, powerupColor])
 
   useFrame(({ clock }) => {
     if (!destroyed && clock.elapsedTime % Math.random() < 0.01) {

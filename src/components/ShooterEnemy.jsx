@@ -13,6 +13,15 @@ const PROJECTILE_SIZE = 0.25
 export function ShooterEnemy(props) {
   const color = props.color || 'red'
   const destroyed = props.destroyed
+  const powerupBrighten = (col) => {
+    // crude brighten: just use a lighter blue if powerupColor is blue
+    if (!col) return '#ffffff'
+    if (col.toLowerCase().includes('blue')) return '#66ccff'
+    return '#ff0000'
+  }
+  const { poweredUp, powerupColor } = useStore((state) => ({ poweredUp: state.poweredUp, powerupColor: state.powerupColor }))
+
+  // Restore missing useSphere for enemy body
   const [ref, api] = useSphere(() => ({
     args: [0.6],
     mass: 2,
@@ -20,7 +29,21 @@ export function ShooterEnemy(props) {
     material: ENEMY_MATERIAL,
     collisionFilterGroup: ENEMY_GROUP,
   }))
-  const [spring, apiSpring] = useEnemyDeathEffect(destroyed, color, api)
+
+  // Local color spring for color/emissive
+  const [colorSpring, colorApi] = useSpring(() => ({
+    color: color,
+    emissive: color,
+    emissiveIntensity: 0.2,
+    config: { duration: 400 },
+  }))
+
+  // Only use useEnemyDeathEffect for scale/opacity
+  let deathFlashColor = undefined;
+  if (poweredUp && powerupColor && powerupColor.toLowerCase().includes('blue')) {
+    deathFlashColor = '#66ccff';
+  }
+  const [spring, apiSpring] = useEnemyDeathEffect(destroyed, color, api, deathFlashColor)
 
   // Track the camera/player position
   const playerPositionRef = useRef([0, 0, 0])
@@ -64,15 +87,26 @@ export function ShooterEnemy(props) {
     cooldown.current -= delta
     if (cooldown.current <= 0.25 && cooldown.current > 0 && !willFire.current) {
         willFire.current = true
-        // Animate the "redness" (emissive color) to a bright red, then back to original
-        apiSpring.start({ 
-            emissive: '#ff0000', 
-            emissiveIntensity: 3.5, 
-            config: { duration: 120 }, 
+        // Animate the color to a bright color before shooting
+        if (poweredUp && powerupColor) {
+          colorApi.start({
+            emissive: 'white',
+            emissiveIntensity: 3.5,
+            config: { duration: 120 },
             onRest: () => {
-                apiSpring.start({ emissive: color, emissiveIntensity: 0.2, config: { duration: 220 } })
+              colorApi.start({ emissive: 'white', emissiveIntensity: 1.5, config: { duration: 220 } })
             }
-        })
+          })
+        } else {
+          colorApi.start({
+            emissive: '#ff0000',
+            emissiveIntensity: 3.5,
+            config: { duration: 120 },
+            onRest: () => {
+              colorApi.start({ emissive: color, emissiveIntensity: 0.2, config: { duration: 220 } })
+            }
+          })
+        }
     }
     if (cooldown.current <= 0) {
       willFire.current = false
@@ -134,19 +168,48 @@ export function ShooterEnemy(props) {
     }
   }, [destroyed])
 
+  // React to poweredUp changes
+  useEffect(() => {
+    if (poweredUp && powerupColor) {
+      colorApi.start({ color: 'white', emissive: 'white', emissiveIntensity: 1.5 })
+    } else {
+      colorApi.start({ color: color, emissive: color, emissiveIntensity: 0.2 })
+    }
+  }, [poweredUp, powerupColor])
+
+  useEffect(() => {
+    if (destroyed && poweredUp && powerupColor && powerupColor.toLowerCase().includes('blue')) {
+      colorApi.start({
+        color: '#66ccff',
+        emissive: '#66ccff',
+        emissiveIntensity: 2,
+        config: { duration: 200 },
+        onRest: () => {
+          colorApi.start({ opacity: 0, config: { duration: 200 } })
+        }
+      })
+    }
+  }, [destroyed, poweredUp, powerupColor, colorApi])
+
   return (
     <>
       <animated.group ref={ref} dispose={null} uuid={props.uuid} scale-y={spring.scaleY} scale={spring.scale}>
         <mesh castShadow receiveShadow>
           <octahedronGeometry args={[0.6, 0]} />
-          <animated.meshStandardMaterial color={spring.color} emissive={spring.emissive} emissiveIntensity={spring.emissiveIntensity} transparent opacity={spring.opacity} metalness={0.7} roughness={0.2} />
+          <animated.meshStandardMaterial color={colorSpring.color} emissive={colorSpring.emissive} emissiveIntensity={colorSpring.emissiveIntensity} transparent opacity={spring.opacity} metalness={0.2} roughness={0.4} />
         </mesh>
       </animated.group>
       {/* Projectile orb visually under the enemy, collides with floor only, not parented */}
       <animated.mesh uuid={`enemy-projectile-${props.uuid}`} ref={projectileRef} castShadow receiveShadow>
         {/* <sphereGeometry args={[0.25, 16, 16]} /> */}
         <octahedronGeometry args={[PROJECTILE_SIZE, 0]} />
-        <animated.meshStandardMaterial color={color} emissive={color} emissiveIntensity={2} transparent opacity={projSpring.opacity} />
+        <animated.meshStandardMaterial 
+          color={poweredUp && powerupColor ? 'white' : color} 
+          emissive={poweredUp && powerupColor ? 'white' : color} 
+          emissiveIntensity={2} 
+          transparent 
+          opacity={projSpring.opacity} 
+        />
       </animated.mesh>
       {/* Gun visual: offset in the direction of the player */}
       {/* <mesh ref={gunRef}>

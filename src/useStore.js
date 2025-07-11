@@ -88,9 +88,11 @@ export const useStore = create((set, get) => {
     isGameOver: false,
     isGameFinished: false,
     poweredUp: false,
+    powerupColor: null,
     palettes,
     ...initialConfig,
     setPoweredUp: (value) => set(() => ({ poweredUp: value })),
+    setPowerupColor: (color) => set(() => ({ powerupColor: color })),
     regeneratePalettes: () => {
       const newPalettes = getInitialPalettes()
       set({ palettes: newPalettes, ...getLevelConfig(0, newPalettes), level: 0 })

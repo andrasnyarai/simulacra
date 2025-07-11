@@ -7,6 +7,7 @@ import { animated, useSpring } from '@react-spring/three'
 import { ENEMY_GROUP, ENEMY_MATERIAL, ENEMY_MOVEMENT_SPEED } from '../constants'
 import { lerp } from '../utils'
 import { useEnemyDeathEffect } from './useEnemyDeathEffect'
+import { useStore } from '../useStore'
 
 const movementBound = 10 * ENEMY_MOVEMENT_SPEED
 
@@ -17,6 +18,7 @@ export function HunterEnemy(props) {
   const destroyed = props.destroyed
   const [isAttacking, setIsAttacking] = useState(false)
   const { factor, color } = useSpring({ factor: isAttacking ? 50 : 5, color: isAttacking ? 'mediumvioletred' : baseColor })
+  const { poweredUp, powerupColor } = useStore((state) => ({ poweredUp: state.poweredUp, powerupColor: state.powerupColor }))
   const [ref, api] = useSphere(() => ({
     args: [0.6],
     mass: 3,
@@ -37,7 +39,11 @@ export function HunterEnemy(props) {
       }
     },
   }))
-  const [spring] = useEnemyDeathEffect(destroyed, baseColor, api)
+  let deathFlashColor = undefined;
+  if (poweredUp && powerupColor && powerupColor.toLowerCase().includes('blue')) {
+    deathFlashColor = '#66ccff';
+  }
+  const [spring] = useEnemyDeathEffect(destroyed, baseColor, api, deathFlashColor)
 
   useFrame(({ clock }) => {
     if (!destroyed && clock.elapsedTime % Math.random() < 0.005 && !isAttacking) {
@@ -52,11 +58,23 @@ export function HunterEnemy(props) {
     return unsubscribe
   }, [])
 
+  useEffect(() => {
+    if (poweredUp && powerupColor) {
+      spring.color.start('white')
+      spring.emissive.start('white')
+      spring.emissiveIntensity.start(1.5)
+    } else {
+      spring.color.start(baseColor)
+      spring.emissive.start(baseColor)
+      spring.emissiveIntensity.start(0.2)
+    }
+  }, [poweredUp, powerupColor])
+
   return (
     <animated.group ref={ref} dispose={null} uuid={props.uuid} scale-y={spring.scaleY} scale={spring.scale}>
       <mesh ref={fieldRef} uuid={props.fieldUuid} />
       <Dodecahedron args={[0.6, 0]} castShadow receiveShadow>
-        <AnimatedMeshWobbleMaterial speed={5} factor={factor} color={spring.color} emissive={spring.emissive} emissiveIntensity={spring.emissiveIntensity} transparent opacity={spring.opacity} />
+        <AnimatedMeshWobbleMaterial speed={5} factor={factor} color={spring.color} emissive={spring.emissive} emissiveIntensity={spring.emissiveIntensity} transparent opacity={spring.opacity}  />
       </Dodecahedron>
     </animated.group>
   )

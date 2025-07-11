@@ -98,10 +98,11 @@ export function useKeyPress(targetKey) {
  * Runs the enemy explosion animation sequence using a react-spring API.
  * @param {SpringApi} api - The spring API from useSpring.
  * @param {string} color - The base color to reset to.
+ * @param {string} [flashColor] - The color to flash at the start of the explosion (default: white).
  * @returns {Promise<void>}
  */
-export async function runExplosionSpring(api, color) {
-  await api.start({ color: '#fff', emissive: '#fff', emissiveIntensity: 2, config: { duration: 200 } });
+export async function runExplosionSpring(api, color, flashColor = '#fff') {
+  await api.start({ color: flashColor, emissive: flashColor, emissiveIntensity: 2, config: { duration: 200 } });
   await api.start({ opacity: 0,  config: { duration: 200 } });
 }
 
@@ -139,9 +140,16 @@ export function randomBluishColor() {
 }
 
 export function randomReddishColor() {
-  // H: 0-20 (red) or 340-360 (magenta-red), high saturation
-  const h = Math.random() < 0.5 ? Math.floor(Math.random() * 20) : 340 + Math.floor(Math.random() * 20)
-  return randomColor({ hRange: [h, h+1], s: 80 + Math.random() * 20, l: 45 + Math.random() * 15 })
+  // Focus on pure red colors - narrower hue range for redder appearance
+  // H: 0-15 (pure red), 350-360 (magenta-red)
+  let h;
+  const roll = Math.random();
+  if (roll < 0.8) {
+    h = Math.floor(Math.random() * 15); // 0-14: pure red
+  } else {
+    h = 350 + Math.floor(Math.random() * 10); // 350-359: magenta-red
+  }
+  return randomColor({ hRange: [h, h+1], s: 80 + Math.random() * 20, l: 45 + Math.random() * 20 });
 }
 
 function hslToHex(h, s, l) {

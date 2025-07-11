@@ -10,7 +10,7 @@ import { useStore } from '../useStore'
 const AnimatedSphere = animated(Sphere)
 
 export function Powerup({ size = 0.6, color = 'deepskyblue', onCollect, ...props }) {
-  const { isPlayerAlive, setPoweredUp } = useStore((state) => state)
+  const { isPlayerAlive, setPoweredUp, setPowerupColor } = useStore((state) => state)
   const [collected, setCollected] = useState(false)
   const { scale, animatedColor, glow } = useSpring({
     scale: collected ? 0.5 : 1,
@@ -28,6 +28,7 @@ export function Powerup({ size = 0.6, color = 'deepskyblue', onCollect, ...props
       if (contact.bi.uuid.includes('player')) {
         setCollected(true)
         setPoweredUp(true)
+        setPowerupColor(color) // Set the global color
         api.collisionFilterMask.set(FLOOR_GROUP)
         api.collisionFilterGroup.set(COLLECTED_STAR_GROUP)
         api.velocity.set(...contact.ri.map((n) => n * -10))

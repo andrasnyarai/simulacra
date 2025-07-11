@@ -11,7 +11,8 @@ import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
-const initialLightIntensity = 9.5
+const initialLightIntensity = 1
+const maxLightIntensity = 2
 
 export function Player(props) {
   const { playerPosition, collectStar, collectedStarsOnLevel, starCount, loadNextLevel, isPlayerAlive, looseLife, level, poweredUp, setPoweredUp } = useStore(
@@ -73,7 +74,12 @@ export function Player(props) {
       }
 
       if (contact.bj.uuid.includes('star')) {
-        setLightIntensity((intensity) => intensity + 0.05)
+        // Calculate increment per star
+        const increment = (maxLightIntensity - initialLightIntensity) / (starCount || 1)
+        setLightIntensity((intensity) => {
+          const next = intensity + increment
+          return next > maxLightIntensity ? maxLightIntensity : next
+        })
         collectStar()
       }
       if (contact.bj.uuid.includes('powerup')) {
@@ -187,7 +193,7 @@ export function Player(props) {
         <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
           <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
         </AnimatedSphere>
-        <pointLight intensity={lightIntensity} distance={40} />
+        <pointLight intensity={lightIntensity} distance={40} decay={.5} />
       </group>
     </>
   )
