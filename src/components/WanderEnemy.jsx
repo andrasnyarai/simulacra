@@ -21,15 +21,16 @@ export function WanderEnemy(props) {
     material: ENEMY_MATERIAL,
     collisionFilterGroup: ENEMY_GROUP,
   }))
-  const { poweredUp, powerupColor } = useStore((state) => ({ poweredUp: state.poweredUp, powerupColor: state.powerupColor }))
+  const { isPoweredUpDestroyer } = useStore((state) => state)
+
   let deathFlashColor = undefined;
-  if (poweredUp && powerupColor && powerupColor.toLowerCase().includes('blue')) {
+  if (isPoweredUpDestroyer()) {
     deathFlashColor = '#66ccff';
   }
   const [spring] = useEnemyDeathEffect(destroyed, color, api, deathFlashColor)
 
   useEffect(() => {
-    if (poweredUp && powerupColor) {
+    if (isPoweredUpDestroyer()) {
       spring.color.start('white')
       spring.emissive.start('white')
       spring.emissiveIntensity.start(1.5)
@@ -38,7 +39,7 @@ export function WanderEnemy(props) {
       spring.emissive.start(color)
       spring.emissiveIntensity.start(0.2)
     }
-  }, [poweredUp, powerupColor])
+  }, [isPoweredUpDestroyer()])
 
   useFrame(({ clock }) => {
     if (!destroyed && clock.elapsedTime % Math.random() < 0.01) {

@@ -1,5 +1,6 @@
 import create from 'zustand'
 import { randomColor, randomDarkColor, randomNeonColor, randomPastelColor, randomWhiteYellowColor, randomBluishColor, randomReddishColor } from './utils'
+import { getRandomPowerupType, POWERUP_CONFIGS, POWERUP_TYPES } from './constants'
 
 // Generate a random color palette with custom generator
 function generatePalette(count, generator) {
@@ -30,9 +31,9 @@ function getLevelConfig(level, palettes) {
   const obstacleCount = Math.max(1, Math.floor(2 + level * 0.7 + Math.random() * 2)) // easier and slower
 
   // Enemies scale up with level, but more slowly and start later
-  const wanderEnemyCount = Math.floor(level / 4) + Math.floor(Math.random() * (difficulty)) // slower
-  const hunterEnemyCount = level > 6 ? Math.floor(level / 8) + Math.floor(Math.random() * (difficulty)) : 0 // start later, slower
-  const shooterEnemyCount = level > 10 ? Math.floor(level / 10) + Math.floor(Math.random() * (difficulty)) : 0 // shooter enemies
+  const wanderEnemyCount = 1//Math.floor(level / 4) + Math.floor(Math.random() * (difficulty)) // slower
+  const hunterEnemyCount = 1//level > 6 ? Math.floor(level / 8) + Math.floor(Math.random() * (difficulty)) : 0 // start later, slower
+  const shooterEnemyCount = 1//level > 10 ? Math.floor(level / 10) + Math.floor(Math.random() * (difficulty)) : 0 // shooter enemies
   // Layout pattern variety
   let layoutPattern = 'default'
   const varietyRoll = Math.random()
@@ -40,11 +41,9 @@ function getLevelConfig(level, palettes) {
   else if (varietyRoll > 0.65) layoutPattern = 'star-cluster'
 
   // Object/enemy type mix: specialType
-  let specialType = null
-  const specialRoll = Math.random()
-  if (specialRoll > 0.97) specialType = 'powerup'
-  else if (specialRoll > 0.92) specialType = 'rare-enemy'
-
+  // Select powerupType based on POWERUP_CONFIGS weights
+  let powerupType = getRandomPowerupType(Math.random())
+  console.log(powerupType, 'powerupType')
   return {
     mapHeight,
     mapWidth,
@@ -58,7 +57,7 @@ function getLevelConfig(level, palettes) {
     hunterEnemyCount,
     shooterEnemyCount,
     layoutPattern,
-    specialType,
+    powerupType,
   }
 }
 
@@ -77,6 +76,7 @@ export const useStore = create((set, get) => {
   const initialLevel = 0
   const palettes = getInitialPalettes()
   const initialConfig = getLevelConfig(initialLevel, palettes)
+
   return {
     isPlayerAlive: true,
     lives: 3,
@@ -87,12 +87,15 @@ export const useStore = create((set, get) => {
     isGateOpen: false,
     isGameOver: false,
     isGameFinished: false,
-    poweredUp: false,
-    powerupColor: null,
+    // --- Powerup system ---
+    currentPowerup: null, // { type } or null
+    isPoweredUpDestroyer: () => get().currentPowerup?.type === POWERUP_TYPES.DESTROYER,
+    isPoweredUpCollector: () => get().currentPowerup?.type === POWERUP_TYPES.COLLECTOR,
+    setCurrentPowerup: (powerup) => set(() => ({ currentPowerup: powerup })),
+    clearCurrentPowerup: () => set(() => ({ currentPowerup: null })),
+    // ---
     palettes,
     ...initialConfig,
-    setPoweredUp: (value) => set(() => ({ poweredUp: value })),
-    setPowerupColor: (color) => set(() => ({ powerupColor: color })),
     regeneratePalettes: () => {
       const newPalettes = getInitialPalettes()
       set({ palettes: newPalettes, ...getLevelConfig(0, newPalettes), level: 0 })
@@ -101,6 +104,10 @@ export const useStore = create((set, get) => {
       set((state) => ({
         collectedStarsOnLevel: state.collectedStarsOnLevel + 1,
         isGateOpen: state.collectedStarsOnLevel + 1 >= state.starCount,
+      })),
+      collectAllStars: () => set((state) => ({
+        collectedStarsOnLevel: state.starCount,
+        isGateOpen: true,
       })),
     looseLife: () => set((state) => ({ lives: state.lives - 1, isPlayerAlive: false, isGameOver: state.lives - 1 <= 0, poweredUp: false })),
     restart: (playerPosition) => set(() => ({ isPlayerAlive: true, playerPosition, poweredUp: false })),
@@ -113,10 +120,11 @@ export const useStore = create((set, get) => {
           collectedStars: state.collectedStars + state.collectedStarsOnLevel,
           collectedStarsOnLevel: 0,
           isGameFinished: false, // never finished
-          poweredUp: false,
+          currentPowerup: null,
           ...getLevelConfig(nextLevel, get().palettes),
         }
       }),
+
   }
 })
 

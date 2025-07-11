@@ -19,7 +19,7 @@ export function ShooterEnemy(props) {
     if (col.toLowerCase().includes('blue')) return '#66ccff'
     return '#ff0000'
   }
-  const { poweredUp, powerupColor } = useStore((state) => ({ poweredUp: state.poweredUp, powerupColor: state.powerupColor }))
+  const { isPoweredUpDestroyer } = useStore((state) => state)
 
   // Restore missing useSphere for enemy body
   const [ref, api] = useSphere(() => ({
@@ -40,7 +40,7 @@ export function ShooterEnemy(props) {
 
   // Only use useEnemyDeathEffect for scale/opacity
   let deathFlashColor = undefined;
-  if (poweredUp && powerupColor && powerupColor.toLowerCase().includes('blue')) {
+  if (isPoweredUpDestroyer()) {
     deathFlashColor = '#66ccff';
   }
   const [spring, apiSpring] = useEnemyDeathEffect(destroyed, color, api, deathFlashColor)
@@ -88,7 +88,7 @@ export function ShooterEnemy(props) {
     if (cooldown.current <= 0.25 && cooldown.current > 0 && !willFire.current) {
         willFire.current = true
         // Animate the color to a bright color before shooting
-        if (poweredUp && powerupColor) {
+        if (isPoweredUpDestroyer()) {
           colorApi.start({
             emissive: 'white',
             emissiveIntensity: 3.5,
@@ -99,7 +99,7 @@ export function ShooterEnemy(props) {
           })
         } else {
           colorApi.start({
-            emissive: '#ff0000',
+            emissive: color,
             emissiveIntensity: 3.5,
             config: { duration: 120 },
             onRest: () => {
@@ -168,17 +168,17 @@ export function ShooterEnemy(props) {
     }
   }, [destroyed])
 
-  // React to poweredUp changes
+  // React to isPoweredUpDestroyer changes
   useEffect(() => {
-    if (poweredUp && powerupColor) {
+    if (isPoweredUpDestroyer()) {
       colorApi.start({ color: 'white', emissive: 'white', emissiveIntensity: 1.5 })
     } else {
       colorApi.start({ color: color, emissive: color, emissiveIntensity: 0.2 })
     }
-  }, [poweredUp, powerupColor])
+  }, [isPoweredUpDestroyer(), color])
 
   useEffect(() => {
-    if (destroyed && poweredUp && powerupColor && powerupColor.toLowerCase().includes('blue')) {
+    if (destroyed && isPoweredUpDestroyer()) {
       colorApi.start({
         color: '#66ccff',
         emissive: '#66ccff',
@@ -189,7 +189,7 @@ export function ShooterEnemy(props) {
         }
       })
     }
-  }, [destroyed, poweredUp, powerupColor, colorApi])
+  }, [destroyed, isPoweredUpDestroyer(), colorApi])
 
   return (
     <>
@@ -204,8 +204,8 @@ export function ShooterEnemy(props) {
         {/* <sphereGeometry args={[0.25, 16, 16]} /> */}
         <octahedronGeometry args={[PROJECTILE_SIZE, 0]} />
         <animated.meshStandardMaterial 
-          color={poweredUp && powerupColor ? 'white' : color} 
-          emissive={poweredUp && powerupColor ? 'white' : color} 
+          color={isPoweredUpDestroyer() ? 'white' : color} 
+          emissive={isPoweredUpDestroyer() ? 'white' : color} 
           emissiveIntensity={2} 
           transparent 
           opacity={projSpring.opacity} 

@@ -18,7 +18,7 @@ export function HunterEnemy(props) {
   const destroyed = props.destroyed
   const [isAttacking, setIsAttacking] = useState(false)
   const { factor, color } = useSpring({ factor: isAttacking ? 50 : 5, color: isAttacking ? 'mediumvioletred' : baseColor })
-  const { poweredUp, powerupColor } = useStore((state) => ({ poweredUp: state.poweredUp, powerupColor: state.powerupColor }))
+  const { isPoweredUpDestroyer } = useStore((state) => state)
   const [ref, api] = useSphere(() => ({
     args: [0.6],
     mass: 3,
@@ -40,7 +40,7 @@ export function HunterEnemy(props) {
     },
   }))
   let deathFlashColor = undefined;
-  if (poweredUp && powerupColor && powerupColor.toLowerCase().includes('blue')) {
+  if (isPoweredUpDestroyer()) {
     deathFlashColor = '#66ccff';
   }
   const [spring] = useEnemyDeathEffect(destroyed, baseColor, api, deathFlashColor)
@@ -59,7 +59,7 @@ export function HunterEnemy(props) {
   }, [])
 
   useEffect(() => {
-    if (poweredUp && powerupColor) {
+    if (isPoweredUpDestroyer()) {
       spring.color.start('white')
       spring.emissive.start('white')
       spring.emissiveIntensity.start(1.5)
@@ -68,7 +68,7 @@ export function HunterEnemy(props) {
       spring.emissive.start(baseColor)
       spring.emissiveIntensity.start(0.2)
     }
-  }, [poweredUp, powerupColor])
+  }, [isPoweredUpDestroyer()])
 
   return (
     <animated.group ref={ref} dispose={null} uuid={props.uuid} scale-y={spring.scaleY} scale={spring.scale}>

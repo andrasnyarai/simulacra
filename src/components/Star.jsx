@@ -11,6 +11,7 @@ const AnimatedSphere = animated(Sphere)
 
 export function Star({ size, color = 'orange', ...props }) {
   const { isPlayerAlive } = useStore((state) => state)
+  const isPoweredUpCollector = useStore((state) => state.isPoweredUpCollector)
   const [collected, setCollected] = useState(false)
   const { scale, animatedColor } = useSpring({
     scale: collected ? props.speed * 0.02 : 1,
@@ -25,22 +26,40 @@ export function Star({ size, color = 'orange', ...props }) {
     collisionFilterGroup: STAR_GROUP,
     onCollide: ({ contact }) => {
       if (contact.bi.uuid.includes('player')) {
-        setCollected(true)
-
-        api.collisionFilterMask.set(FLOOR_GROUP)
-        api.collisionFilterGroup.set(COLLECTED_STAR_GROUP)
-        api.velocity.set(...contact.ri.map((n) => n * -10))
-
-        setTimeout(() => api.collisionFilterMask.set(null), 200)
+        collectStar(contact)
       }
     },
   }))
+
+  const collectStar = (contact) => {
+    setCollected(true)
+    api.collisionFilterMask.set(FLOOR_GROUP)
+    api.collisionFilterGroup.set(COLLECTED_STAR_GROUP)
+    api.velocity.set(...contact.ri.map((n) => n * -10))
+    setTimeout(() => api.collisionFilterMask.set(null), 200)
+  }
+
+
 
   const position = useRef([0, 0, 0])
   useEffect(() => {
     const unsubscribe = api.position.subscribe((v) => (position.current = v))
     return unsubscribe
   }, [])
+
+  // This effect never runs because the Star component is unmounted before the powerup is set,
+  // or the subscription is not triggering as expected. Instead, let's use a selector to directly
+  // check the currentPowerup value and trigger the effect when it changes.
+
+  const currentPowerup = useStore((state) => state.currentPowerup)
+  // console.log(currentPowerup, 'currentPowerupin stars?????')
+
+  useEffect(() => {
+    if (currentPowerup?.type === 'collector' && !collected) {
+      collectStar({ ri: [0, 0, 0] })
+    }
+    // eslint-disable-next-line
+  }, [currentPowerup, collected])
 
   useFrame(({ camera }) => {
     if (collected && isPlayerAlive) {

@@ -3,22 +3,23 @@ import { useSpring, animated } from '@react-spring/three'
 import { useSphere } from '@react-three/cannon'
 import { Sphere, Icosahedron, MeshWobbleMaterial } from '@react-three/drei'
 
-import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP } from '../constants'
+import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP, POWERUP_TYPES, POWERUP_CONFIGS } from '../constants'
 import { useFrame } from '@react-three/fiber'
 import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
-export function Powerup({ size = 0.6, color = 'deepskyblue', onCollect, ...props }) {
-  const { isPlayerAlive, setPoweredUp, setPowerupColor } = useStore((state) => state)
+export function Powerup({ size = 0.6, powerupType, onCollect, ...props }) {
+  const { isPlayerAlive, setCurrentPowerup, collectAllStars } = useStore((state) => state)
   const [collected, setCollected] = useState(false)
+  const color = POWERUP_CONFIGS[powerupType]?.color
   const { scale, animatedColor, glow } = useSpring({
     scale: collected ? 0.5 : 1,
     animatedColor: collected ? 'white' : color,
     glow: collected ? 2 : 1.2,
     config: { mass: 1, tension: 280, friction: 60 },
   })
-
+console.log(powerupType, 'powerupType')
   const [ref, api] = useSphere(() => ({
     args: [size],
     mass: 0.00001,
@@ -27,8 +28,10 @@ export function Powerup({ size = 0.6, color = 'deepskyblue', onCollect, ...props
     onCollide: ({ contact }) => {
       if (contact.bi.uuid.includes('player')) {
         setCollected(true)
-        setPoweredUp(true)
-        setPowerupColor(color) // Set the global color
+        setCurrentPowerup({ type: powerupType })
+        if (powerupType === POWERUP_TYPES.COLLECTOR) {
+          collectAllStars()
+        }
         api.collisionFilterMask.set(FLOOR_GROUP)
         api.collisionFilterGroup.set(COLLECTED_STAR_GROUP)
         api.velocity.set(...contact.ri.map((n) => n * -10))

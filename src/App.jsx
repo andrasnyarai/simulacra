@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { Stars as StarsBackground } from '@react-three/drei'
 import { Physics, useContactMaterial, Debug } from '@react-three/cannon'
 
-import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL } from './constants'
+import { ENEMY_MATERIAL, PLANE_MATERIAL, PLAYER_MATERIAL, POWERUP_TYPES } from './constants'
 import { isMobile, lerp, calculateStartingPosition, calculateNonOverlappingPositions } from './utils'
 import { useStore } from './useStore'
 import { Terrain } from './components/Terrain'
@@ -63,7 +63,7 @@ function placeStarsSafely(starPositions, obstaclePositions, mapWidth, mapHeight,
   return starSafePositions
 }
 
-const ObstaclesAndStars = React.memo(({ mapWidth, mapHeight, level, starCount, obstacleCount, obstacleColor, starColor, layoutPattern, specialType }) => {
+const ObstaclesAndStars = React.memo(({ mapWidth, mapHeight, level, starCount, obstacleCount, obstacleColor, starColor, layoutPattern,  powerupType }) => {
   let positions = []
   if (layoutPattern === 'star-cluster') {
     // Cluster stars in the center, obstacles random
@@ -121,6 +121,7 @@ const ObstaclesAndStars = React.memo(({ mapWidth, mapHeight, level, starCount, o
     const dist = Math.sqrt(dx * dx + dz * dz)
     return dist < (sizeA + sizeB)
   }
+
   let tries = 0
   let maxTries = 30
   let found = false
@@ -134,9 +135,11 @@ const ObstaclesAndStars = React.memo(({ mapWidth, mapHeight, level, starCount, o
     if (!overlaps) found = true
     tries++
   }
+
   let powerup = null
-  if (found) {
-    powerup = <Powerup key={`powerup-${level}`} position={[pos.x, 1, pos.z]} uuid={`powerup-${level}`} />
+
+  if (powerupType) {
+    powerup = <Powerup key={`powerup-${level}`} position={[pos.x, 1, pos.z]} uuid={`powerup-${level}`} powerupType={powerupType} />
   }
 
   return (
@@ -173,6 +176,7 @@ const Scene = () => {
     obstacleColor,
     starColor,
     layoutPattern,
+    powerupType,
   } = useStore((state) => state)
 
   const [destroyedEnemies, setDestroyedEnemies] = useState([])
@@ -222,7 +226,7 @@ const Scene = () => {
       <Player position={playerPosition} uuid={`player`} />
       <BlackHole position={[0, 1, 0]} uuid={`black-hole`} />
 
-      <ObstaclesAndStars mapHeight={mapHeight} mapWidth={mapWidth} level={level} obstacleCount={obstacleCount} starCount={starCount} obstacleColor={obstacleColor} starColor={starColor} layoutPattern={layoutPattern} />
+      <ObstaclesAndStars mapHeight={mapHeight} mapWidth={mapWidth} level={level} obstacleCount={obstacleCount} starCount={starCount} obstacleColor={obstacleColor} starColor={starColor} layoutPattern={layoutPattern} powerupType={powerupType} />
 
       {/* Enemies, filtered by destroyedEnemies */}
       {[...new Array(wanderEnemyCount)].map((_, i) => {

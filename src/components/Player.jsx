@@ -6,7 +6,7 @@ import { useSpring, animated } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
 
 import { isMobile, map, useKeyPress } from '../utils'
-import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL, PROJECTILE_GROUP } from '../constants'
+import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL, PROJECTILE_GROUP, POWERUP_TYPES } from '../constants'
 import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
@@ -15,7 +15,7 @@ const initialLightIntensity = 1
 const maxLightIntensity = 2
 
 export function Player(props) {
-  const { playerPosition, collectStar, collectedStarsOnLevel, starCount, loadNextLevel, isPlayerAlive, looseLife, level, poweredUp, setPoweredUp } = useStore(
+  const { playerPosition, collectStar, collectedStarsOnLevel, starCount, loadNextLevel, isPlayerAlive, looseLife, level, isPoweredUpDestroyer, setCurrentPowerup, clearCurrentPowerup } = useStore(
     (state) => state
   )
   const { camera } = useThree()
@@ -27,17 +27,16 @@ export function Player(props) {
     shieldScale: isHidden ? 0.1 : 1,
     scale: isHidden ? 0.1 : Math.min(size, 1),
     intensity: isHidden ? 1 : 0.05,
-    powerColor: poweredUp ? 'deepskyblue' : 'white',
   })
 
-  const poweredUpRef = useRef(poweredUp)
-  useEffect(() => {
-    poweredUpRef.current = poweredUp
-  }, [poweredUp])
+  const poweredUpRef = useRef(null)
+  // useEffect(() => {
+  //   // poweredUpRef.current = poweredUp
+  // }, [poweredUp])
 
   // Reset powerup on level change
   useEffect(() => {
-    setPoweredUp(false)
+    clearCurrentPowerup()
   }, [level])
 
   const [ref, api] = useSphere(() => ({
@@ -49,14 +48,13 @@ export function Player(props) {
     material: PLAYER_MATERIAL,
     onCollide: ({ contact }) => {
       if (contact.bj.uuid.includes('enemy') || contact.bj.uuid.includes('enemy-projectile')) {
-        if (poweredUpRef.current) {
+
+        if (isPoweredUpDestroyer()) {
           // Destroy enemy: set its velocity high and remove from scene after a delay
           if (contact.bj && contact.bj._physijs) {
-            // For Cannon.js, try to set velocity
             contact.bj.velocity.set(0, 10, 0)
           }
           if (contact.bj.uuid && window.dispatchEvent) {
-            console.log('destroy-enemy', contact.bj.uuid)
             window.dispatchEvent(new CustomEvent('destroy-enemy', { detail: { uuid: contact.bj.uuid } }))
           }
         } else {
@@ -83,7 +81,7 @@ export function Player(props) {
         collectStar()
       }
       if (contact.bj.uuid.includes('powerup')) {
-        setPoweredUp(true)
+        setCurrentPowerup({ type: POWERUP_TYPES.DESTROYER })
       }
     },
   }))

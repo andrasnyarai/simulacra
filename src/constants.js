@@ -16,3 +16,41 @@ export const PROJECTILE_GROUP = 8
 export const ENEMY_MOVEMENT_SPEED = isMobile() ? 0.75 : 1
 
 export const RESPAWN_BLOCK_MS = 1000
+
+export const POWERUP_TYPES = {
+  DESTROYER: 'destroyer',
+  COLLECTOR: 'collector',
+  CLEANER: 'cleaner',
+}
+
+export const POWERUP_CONFIGS = {
+  [POWERUP_TYPES.DESTROYER]: { label: 'Destroyer', color: '#66ccff', weight: 0.3 },
+  [POWERUP_TYPES.COLLECTOR]: { label: 'Collector', color: '#ffe066', weight: 0.3 },
+  [POWERUP_TYPES.CLEANER]: { label: 'Cleaner', color: '#00081a', weight: 0.3 },
+}
+
+/**
+ * Returns a powerup type based on a random number between 0 and 1,
+ * using the weights defined in POWERUP_CONFIGS.
+ * @param {number} rand - A random number between 0 and 1.
+ * @returns {string} - The selected powerup type.
+ */
+export function getRandomPowerupType(rand) {
+  // Build an array of { type, weight }
+  const configs = Object.entries(POWERUP_CONFIGS).map(([type, config]) => ({
+    type,
+    weight: config.weight,
+  }))
+  // Calculate total weight
+  const totalWeight = configs.reduce((sum, c) => sum + c.weight, 0)
+  // Scale rand to totalWeight
+  let r = rand * totalWeight
+  for (let i = 0; i < configs.length; i++) {
+    if (r < configs[i].weight) {
+      return configs[i].type
+    }
+    r -= configs[i].weight
+  }
+  // Fallback (should not happen)
+  return configs[configs.length - 1].type
+}
