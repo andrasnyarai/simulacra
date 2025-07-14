@@ -4,10 +4,10 @@ import { MeshWobbleMaterial, Dodecahedron } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
 import { animated, useSpring } from '@react-spring/three'
 
-import { ENEMY_GROUP, ENEMY_MATERIAL, ENEMY_MOVEMENT_SPEED } from '../constants'
-import { lerp } from '../utils'
+import { ENEMY_GROUP, ENEMY_MATERIAL, ENEMY_MOVEMENT_SPEED } from '../../constants'
+import { lerp } from '../../utils'
 import { useEnemyDeathEffect } from './useEnemyDeathEffect'
-import { useStore } from '../useStore'
+import { useStore } from '../../useStore'
 
 const movementBound = 10 * ENEMY_MOVEMENT_SPEED
 

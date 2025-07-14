@@ -13,7 +13,7 @@ export function BlackHole(props) {
   const { levelColor, isGateOpen } = useStore((state) => state)
   const { scale, intensity } = useSpring({
     scale: isGateOpen ? 1 : 0,
-    intensity: isGateOpen ? 250 : 0, // Increased from 20 to 150
+    intensity: isGateOpen ? 250 : 0,
     config: { bounce: 5, duration: 1000 },
   })
 
@@ -57,7 +57,7 @@ export function BlackHole(props) {
           distort={distort} 
           radius={radius}
           emissive={levelColor}
-          emissiveIntensity={0.2} // Even lower emissive
+          emissiveIntensity={0.2}
           metalness={0.9}
           transparent
           opacity={0.9}
@@ -66,7 +66,7 @@ export function BlackHole(props) {
           position={[0, 0, 0]}
           intensity={intensity}
           color={levelColor}
-          distance={120} // Increased from 40 to 120
+          distance={120}
           castShadow
           shadow-mapSize-height={512 * 2}
           shadow-mapSize-width={512 * 2}

@@ -10,13 +10,13 @@ import { Terrain } from './components/Terrain'
 import { Player } from './components/Player'
 import { Obstacle } from './components/Obstacle'
 import { Star } from './components/Star'
-import { WanderEnemy } from './components/WanderEnemy'
-import { HunterEnemy } from './components/HunterEnemy'
+import { WanderEnemy } from './components/enemies/WanderEnemy'
+import { HunterEnemy } from './components/enemies/HunterEnemy'
 import { BlackHole } from './components/BlackHole'
 import { Effects } from './components/Effects'
 import { Menu } from './components/Menu'
 import { Powerup } from './components/Powerup'
-import { ShooterEnemy } from './components/ShooterEnemy'
+import { ShooterEnemy } from './components/enemies/ShooterEnemy'
 
 // Utility: place stars safely so they don't overlap obstacles or each other
 function placeStarsSafely(starPositions, obstaclePositions, mapWidth, mapHeight, clusterCenter = null, clusterRadius = null) {

@@ -29,11 +29,6 @@ export function Player(props) {
     intensity: isHidden ? 1 : 0.05,
   })
 
-  const poweredUpRef = useRef(null)
-  // useEffect(() => {
-  //   // poweredUpRef.current = poweredUp
-  // }, [poweredUp])
-
   // Reset powerup on level change
   useEffect(() => {
     clearCurrentPowerup()

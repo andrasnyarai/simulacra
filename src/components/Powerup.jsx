@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSpring, animated } from '@react-spring/three'
 import { useSphere } from '@react-three/cannon'
-import { Sphere, Icosahedron, MeshWobbleMaterial } from '@react-three/drei'
+import { Icosahedron } from '@react-three/drei'
 
 import { COLLECTED_STAR_GROUP, FLOOR_GROUP, STAR_GROUP, POWERUP_CONFIGS } from '../constants'
 import { useFrame } from '@react-three/fiber'
 import { useStore } from '../useStore'
-
-const AnimatedSphere = animated(Sphere)
 
 export function Powerup({ size = 0.6, powerupType, onCollect, ...props }) {
   const { isPlayerAlive, setCurrentPowerup, collectAllStars } = useStore((state) => state)
@@ -19,7 +17,7 @@ export function Powerup({ size = 0.6, powerupType, onCollect, ...props }) {
     glow: collected ? 2 : 1.2,
     config: { mass: 1, tension: 280, friction: 60 },
   })
-console.log(powerupType, 'powerupType')
+
   const [ref, api] = useSphere(() => ({
     args: [size],
     mass: 0.00001,
