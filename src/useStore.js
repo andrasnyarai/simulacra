@@ -1,211 +1,131 @@
 import create from 'zustand'
+import { randomColor, randomDarkColor, randomNeonColor, randomPastelColor, randomWhiteYellowColor, randomBluishColor, randomReddishColor } from './utils'
+import { getRandomPowerupType } from './constants'
 
-const levels = [
-  {
-    mapHeight: 20,
-    mapWidth: 20,
-    levelColor: 'forestgreen',
-    starCount: 10,
-    obstacleCount: 5,
-    wanderEnemyCount: 0,
-    hunterEnemyCount: 0,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 20,
-    mapWidth: 20,
-    levelColor: 'green',
-    starCount: 15,
-    obstacleCount: 15,
-    wanderEnemyCount: 1,
-    hunterEnemyCount: 0,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 30,
-    mapWidth: 30,
-    levelColor: 'darkgreen',
-    starCount: 30,
-    obstacleCount: 25,
-    wanderEnemyCount: 2,
-    hunterEnemyCount: 0,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 20,
-    mapWidth: 40,
-    levelColor: 'forestgreen',
-    starCount: 30,
-    obstacleCount: 20,
-    wanderEnemyCount: 4,
-    hunterEnemyCount: 0,
-    spinnerEnemyCount: 0,
-  },
-
-  {
-    mapHeight: 50,
-    mapWidth: 50,
-    levelColor: 'midnightblue',
-    starCount: 15,
-    obstacleCount: 15,
-    wanderEnemyCount: 7,
-    hunterEnemyCount: 1,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 60,
-    mapWidth: 60,
-    levelColor: 'blue',
-    starCount: 20,
-    obstacleCount: 18,
-    wanderEnemyCount: 8,
-    hunterEnemyCount: 1,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 60,
-    mapWidth: 60,
-    levelColor: 'darkblue',
-    starCount: 40,
-    obstacleCount: 5,
-    wanderEnemyCount: 6,
-    hunterEnemyCount: 2,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 70,
-    mapWidth: 30,
-    levelColor: 'navy',
-    starCount: 50,
-    obstacleCount: 20,
-    wanderEnemyCount: 8,
-    hunterEnemyCount: 2,
-    spinnerEnemyCount: 0,
-  },
-
-  {
-    mapHeight: 40,
-    mapWidth: 40,
-    levelColor: 'rebeccapurple',
-    starCount: 20,
-    obstacleCount: 5,
-    wanderEnemyCount: 0,
-    hunterEnemyCount: 4,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 35,
-    mapWidth: 45,
-    levelColor: 'indigo',
-    starCount: 25,
-    obstacleCount: 0,
-    wanderEnemyCount: 7,
-    hunterEnemyCount: 2,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 40,
-    mapWidth: 50,
-    levelColor: 'purple',
-    starCount: 25,
-    obstacleCount: 8,
-    wanderEnemyCount: 15,
-    hunterEnemyCount: 0,
-    spinnerEnemyCount: 0,
-  },
-  {
-    mapHeight: 30,
-    mapWidth: 30,
-    levelColor: 'darkviolet',
-    starCount: 18,
-    obstacleCount: 4,
-    wanderEnemyCount: 2,
-    hunterEnemyCount: 0,
-    spinnerEnemyCount: 2,
-  },
-
-  {
-    mapHeight: 30,
-    mapWidth: 50,
-    levelColor: 'crimson',
-    starCount: 40,
-    obstacleCount: 20,
-    wanderEnemyCount: 0,
-    hunterEnemyCount: 1,
-    spinnerEnemyCount: 2,
-  },
-  {
-    mapHeight: 40,
-    mapWidth: 30,
-    levelColor: 'darkred',
-    starCount: 10,
-    obstacleCount: 15,
-    wanderEnemyCount: 2,
-    hunterEnemyCount: 2,
-    spinnerEnemyCount: 2,
-  },
-  {
-    mapHeight: 30,
-    mapWidth: 30,
-    levelColor: 'maroon',
-    starCount: 30,
-    obstacleCount: 10,
-    wanderEnemyCount: 0,
-    hunterEnemyCount: 0,
-    spinnerEnemyCount: 3,
-  },
-  {
-    mapHeight: 25,
-    mapWidth: 25,
-    levelColor: 'firebrick',
-    starCount: 13,
-    obstacleCount: 8,
-    wanderEnemyCount: 3,
-    hunterEnemyCount: 1,
-    spinnerEnemyCount: 2,
-  },
-]
-
-const endLevel = {
-  mapHeight: 15,
-  mapWidth: 15,
-  levelColor: 'black',
-  starCount: 0,
-  obstacleCount: 1,
-  wanderEnemyCount: 0,
-  hunterEnemyCount: 0,
-  spinnerEnemyCount: 0,
+// Generate a random color palette with custom generator
+function generatePalette(count, generator) {
+  return Array.from({ length: count }, () => generator())
 }
 
-export const allStarCount = levels.map(({ starCount }) => starCount).reduce((a, b) => a + b)
+function getLevelConfig(level, palettes) {
+  // Difficulty scaling
+  const easyLevels = 3
+  const base = Math.floor(level / (easyLevels * 2)) // slower progression
+  const difficulty = Math.max(1, base)
 
-export const useStore = create((set) => ({
-  isPlayerAlive: true,
-  lives: 3,
-  level: 0,
-  playerPosition: [0, 0.5, 0],
-  collectedStars: 0,
-  collectedStarsOnLevel: 0,
-  isGateOpen: false,
-  isGameOver: false,
-  isGameFinished: false,
-  ...levels[0],
-  collectStar: () =>
-    set((state) => ({
-      collectedStarsOnLevel: state.collectedStarsOnLevel + 1,
-      isGateOpen: state.collectedStarsOnLevel + 1 >= state.starCount,
-    })),
-  looseLife: () => set((state) => ({ lives: state.lives - 1, isPlayerAlive: false, isGameOver: state.lives - 1 <= 0 })),
-  restart: (playerPosition) => set(() => ({ isPlayerAlive: true, playerPosition })),
-  loadNextLevel: () =>
-    set((state) => ({
-      level: state.level + 1,
-      isGateOpen: false,
-      collectedStars: state.collectedStars + state.collectedStarsOnLevel,
-      collectedStarsOnLevel: 0,
-      isGameFinished: state.level + 1 === levels.length,
-      ...(state.level + 1 === levels.length ? endLevel : levels[state.level + 1]),
-    })),
-}))
+  // Map size grows even more slowly
+  const mapBase = 20
+  const mapGrowth = Math.min(60, mapBase + Math.floor(level * 1 + Math.random() * 2)) // slower growth
+  const mapWidth = mapGrowth + Math.floor(Math.random() * 5)
+  const mapHeight = mapGrowth + Math.floor(Math.random() * 5)
+
+  // Color cycling from palettes
+  const { levelColors, enemyColors, obstacleColors, starColors } = palettes
+  const levelColor = levelColors[level % levelColors.length]
+  const enemyColor = enemyColors[level % enemyColors.length]
+  const obstacleColor = obstacleColors[level % obstacleColors.length]
+  const starColor = starColors[level % starColors.length]
+
+  // Star and obstacle count: easier start, slower increase
+  const starCount = Math.max(3, Math.floor(5 + level * 0.7 + Math.random() * 3)) // easier and slower
+  const obstacleCount = Math.max(1, Math.floor(2 + level * 0.7 + Math.random() * 2)) // easier and slower
+
+  // Enemies scale up with level, but more slowly and start later
+  const wanderEnemyCount = Math.floor(level / 4) + Math.floor(Math.random() * (difficulty)) // slower
+  const hunterEnemyCount = level > 6 ? Math.floor(level / 8) + Math.floor(Math.random() * (difficulty)) : 0 // start later, slower
+  const shooterEnemyCount = level > 10 ? Math.floor(level / 10) + Math.floor(Math.random() * (difficulty)) : 0 // shooter enemies
+  // Layout pattern variety
+  let layoutPattern = 'default'
+  const varietyRoll = Math.random()
+  if (varietyRoll > 0.85) layoutPattern = 'obstacle-maze'
+  else if (varietyRoll > 0.65) layoutPattern = 'star-cluster'
+
+  // Object/enemy type mix: specialType
+  // Select powerupType based on POWERUP_CONFIGS weights
+  let powerupType = getRandomPowerupType(Math.random())
+  console.log(powerupType, 'powerupType')
+  return {
+    mapHeight,
+    mapWidth,
+    levelColor,
+    enemyColor,
+    obstacleColor,
+    starColor,
+    starCount,
+    obstacleCount,
+    wanderEnemyCount,
+    hunterEnemyCount,
+    shooterEnemyCount,
+    layoutPattern,
+    powerupType,
+  }
+}
+
+export { getLevelConfig }
+
+function getInitialPalettes() {
+  return {
+    levelColors: generatePalette(30, randomDarkColor), // backgrounds: dark
+    enemyColors: generatePalette(10, randomReddishColor), // enemies: red
+    obstacleColors: generatePalette(10, randomBluishColor), // obstacles: blue
+    starColors: generatePalette(8, randomWhiteYellowColor), // stars: white/yellow
+  }
+}
+
+export const useStore = create((set, get) => {
+  const initialLevel = 0
+  const palettes = getInitialPalettes()
+  const initialConfig = getLevelConfig(initialLevel, palettes)
+
+  return {
+    isPlayerAlive: true,
+    lives: 3,
+    level: initialLevel,
+    playerPosition: [0, 0.5, 0],
+    collectedStars: 0,
+    collectedStarsOnLevel: 0,
+    isGateOpen: false,
+    isGameOver: false,
+    isGameFinished: false,
+    // --- Powerup system ---
+    currentPowerup: null, // { type } or null
+    isPoweredUpDestroyer: () => get().currentPowerup?.type === 'Destroyer',
+    isPoweredUpCollector: () => get().currentPowerup?.type === 'Collector',
+    setCurrentPowerup: (powerup) => set(() => ({ currentPowerup: powerup })),
+    clearCurrentPowerup: () => set(() => ({ currentPowerup: null })),
+    // ---
+    palettes,
+    ...initialConfig,
+    regeneratePalettes: () => {
+      const newPalettes = getInitialPalettes()
+      set({ palettes: newPalettes, ...getLevelConfig(0, newPalettes), level: 0 })
+    },
+    collectStar: () =>
+      set((state) => ({
+        collectedStarsOnLevel: state.collectedStarsOnLevel + 1,
+        isGateOpen: state.collectedStarsOnLevel + 1 >= state.starCount,
+      })),
+      collectAllStars: () => set((state) => ({
+        collectedStarsOnLevel: state.starCount,
+        isGateOpen: true,
+      })),
+    looseLife: () => set((state) => ({ lives: state.lives - 1, isPlayerAlive: false, isGameOver: state.lives - 1 <= 0, poweredUp: false })),
+    restart: (playerPosition) => set(() => ({ isPlayerAlive: true, playerPosition, poweredUp: false })),
+    loadNextLevel: () =>
+      set((state) => {
+        const nextLevel = state.level + 1
+        return {
+          level: nextLevel,
+          isGateOpen: false,
+          collectedStars: state.collectedStars + state.collectedStarsOnLevel,
+          collectedStarsOnLevel: 0,
+          isGameFinished: false, // never finished
+          currentPowerup: null,
+          ...getLevelConfig(nextLevel, get().palettes),
+        }
+      }),
+
+  }
+})
 
 export const initialState = useStore.getState()

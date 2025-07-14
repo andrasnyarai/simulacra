@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Sphere, MeshDistortMaterial } from '@react-three/drei'
 import { useSphere } from '@react-three/cannon'
@@ -6,15 +6,16 @@ import { useSpring, animated } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
 
 import { isMobile, map, useKeyPress } from '../utils'
-import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL } from '../constants'
+import { FLOOR_GROUP, OBSTACLE_GROUP, PLAYER_GROUP, PLAYER_MATERIAL, PROJECTILE_GROUP } from '../constants'
 import { useStore } from '../useStore'
 
 const AnimatedSphere = animated(Sphere)
 
-const initialLightIntensity = 1.5
+const initialLightIntensity = 1
+const maxLightIntensity = 2
 
 export function Player(props) {
-  const { playerPosition, collectStar, collectedStarsOnLevel, starCount, loadNextLevel, isPlayerAlive, looseLife, level } = useStore(
+  const { playerPosition, collectStar, collectedStarsOnLevel, starCount, loadNextLevel, isPlayerAlive, looseLife, level, isPoweredUpDestroyer, setCurrentPowerup, clearCurrentPowerup } = useStore(
     (state) => state
   )
   const { camera } = useThree()
@@ -28,6 +29,16 @@ export function Player(props) {
     intensity: isHidden ? 1 : 0.05,
   })
 
+  const poweredUpRef = useRef(null)
+  // useEffect(() => {
+  //   // poweredUpRef.current = poweredUp
+  // }, [poweredUp])
+
+  // Reset powerup on level change
+  useEffect(() => {
+    clearCurrentPowerup()
+  }, [level])
+
   const [ref, api] = useSphere(() => ({
     args: [0.5],
     mass: 2,
@@ -36,10 +47,21 @@ export function Player(props) {
     collisionFilterGroup: PLAYER_GROUP,
     material: PLAYER_MATERIAL,
     onCollide: ({ contact }) => {
-      if (contact.bj.uuid.includes('enemy')) {
-        setIsHidden(true)
-        api.collisionFilterMask.set(null)
-        looseLife()
+      if (contact.bj.uuid.includes('enemy') || contact.bj.uuid.includes('enemy-projectile')) {
+
+        if (isPoweredUpDestroyer()) {
+          // Destroy enemy: set its velocity high and remove from scene after a delay
+          if (contact.bj && contact.bj._physijs) {
+            contact.bj.velocity.set(0, 10, 0)
+          }
+          if (contact.bj.uuid && window.dispatchEvent) {
+            window.dispatchEvent(new CustomEvent('destroy-enemy', { detail: { uuid: contact.bj.uuid } }))
+          }
+        } else {
+          setIsHidden(true)
+          api.collisionFilterMask.set(null)
+          looseLife()
+        }
       }
 
       if (contact.bj.uuid.includes('black-hole')) {
@@ -50,8 +72,16 @@ export function Player(props) {
       }
 
       if (contact.bj.uuid.includes('star')) {
-        setLightIntensity((intensity) => intensity + 0.05)
+        // Calculate increment per star
+        const increment = (maxLightIntensity - initialLightIntensity) / (starCount || 1)
+        setLightIntensity((intensity) => {
+          const next = intensity + increment
+          return next > maxLightIntensity ? maxLightIntensity : next
+        })
         collectStar()
+      }
+      if (contact.bj.uuid.includes('powerup')) {
+        setCurrentPowerup({ type: 'Destroyer' })
       }
     },
   }))
@@ -74,7 +104,7 @@ export function Player(props) {
     setLightIntensity(initialLightIntensity)
     api.position.set(0, 0.5, 0)
     api.velocity.set(0, 0, 0)
-    api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP)
+    api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP | PROJECTILE_GROUP)
 
     setIsHidden(false)
   }, [level])
@@ -90,7 +120,7 @@ export function Player(props) {
         api.position.set(x, y, z)
       }
       api.velocity.set(0, 0, 0)
-      api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP)
+      api.collisionFilterMask.set(FLOOR_GROUP | OBSTACLE_GROUP | PROJECTILE_GROUP)
       setIsHidden(false)
     }
   }, [isPlayerAlive])
@@ -161,7 +191,7 @@ export function Player(props) {
         <AnimatedSphere args={[0.5]} scale={scale} castShadow receiveShadow>
           <MeshDistortMaterial color="white" emissive="white" speed={5} distort={0.5} radius={1} />
         </AnimatedSphere>
-        <pointLight intensity={lightIntensity} distance={20} />
+        <pointLight intensity={lightIntensity} distance={40} decay={.5} />
       </group>
     </>
   )

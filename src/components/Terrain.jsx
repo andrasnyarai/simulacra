@@ -17,7 +17,7 @@ function Plane({ args, cannonArgs, position, cannonPosition, rotation, color, on
 
   return (
     <Box args={args} position={position} rotation={rotation} uuid={props.uuid} castShadow receiveShadow onClick={onClick}>
-      <meshStandardMaterial color={color} transparent opacity={0.5} />
+      <meshStandardMaterial color={color} opacity={0.9} transparent  depthWrite={false} />
     </Box>
   )
 }
@@ -98,6 +98,20 @@ export function Terrain({ mapWidth, mapHeight, color, level }) {
         cannonArgs={[mapHeight + wallCannonThickness, 15, wallCannonThickness]}
         receiveShadow
       />
+
+      {/* Thin boxes on top of walls to mark boundaries */}
+      <Box position={[0, 1, -mapHeight/2]} args={[mapWidth, 0.05, 0.05]}>
+        <meshBasicMaterial color={color} />
+      </Box>
+      <Box position={[0, 1, mapHeight/2]} args={[mapWidth, 0.05, 0.05]}>
+        <meshBasicMaterial color={color} />
+      </Box>
+      <Box position={[mapWidth/2, 1, 0]} args={[0.05, 0.05, mapHeight]}>
+        <meshBasicMaterial color={color} />
+      </Box>
+      <Box position={[-mapWidth/2, 1, 0]} args={[0.05, 0.05, mapHeight]}>
+        <meshBasicMaterial color={color} />
+      </Box>
     </scene>
   )
 }
