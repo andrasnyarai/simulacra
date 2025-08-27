@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from '@react-spring/three'
 import { useSphere } from '@react-three/cannon'
 import { useFrame, useThree } from '@react-three/fiber'
-import { ENEMY_GROUP, ENEMY_MATERIAL, FLOOR_GROUP, PROJECTILE_GROUP, OBSTACLE_GROUP, PLAYER_GROUP } from '../constants'
+import { ENEMY_GROUP, ENEMY_MATERIAL, FLOOR_GROUP, PROJECTILE_GROUP, OBSTACLE_GROUP, PLAYER_GROUP } from '../../constants'
 import { useEnemyDeathEffect } from './useEnemyDeathEffect'
-import { useStore } from '../useStore'
+import { useStore } from '../../useStore'
 
 const FIRE_COOLDOWN = 1.8 // seconds
 const PROJECTILE_SPEED = 15
@@ -13,12 +13,7 @@ const PROJECTILE_SIZE = 0.25
 export function ShooterEnemy(props) {
   const color = props.color || 'red'
   const destroyed = props.destroyed
-  const powerupBrighten = (col) => {
-    // crude brighten: just use a lighter blue if powerupColor is blue
-    if (!col) return '#ffffff'
-    if (col.toLowerCase().includes('blue')) return '#66ccff'
-    return '#ff0000'
-  }
+
   const { isPoweredUpDestroyer } = useStore((state) => state)
 
   // Restore missing useSphere for enemy body
@@ -67,12 +62,6 @@ export function ShooterEnemy(props) {
     position: [props.position[0], (props.position[1] || 0) - 1, props.position[2]],
     collisionFilterGroup: PROJECTILE_GROUP,
     collisionFilterMask: FLOOR_GROUP | OBSTACLE_GROUP | PLAYER_GROUP,
-    onCollide: ({ contact }) => {
-    //     console.log('projectile onCollide', contact.bi.uuid)
-    //   if (contact.bi && contact.bi.uuid && contact.bi.uuid.includes('player')) {
-    //     looseLife();
-    //   }
-    },
   }))
 
   // Firing cadence
@@ -133,26 +122,6 @@ export function ShooterEnemy(props) {
     }
   })
 
-  // Ref for the gun mesh
-  const gunRef = useRef()
-  useFrame(() => {
-    playerPositionRef.current = camera.position.toArray()
-    // --- Gun visual: offset in the direction of the player ---
-    if (gunRef.current && position.current) {
-      const [ex, ey, ez] = position.current
-      const [px, , pz] = playerPositionRef.current
-      const dx = px - ex
-      const dz = pz - ez
-      const dist = Math.sqrt(dx * dx + dz * dz) || 1
-      const dirX = dx / dist
-      const dirZ = dz / dist
-      const offset = 0.7
-      gunRef.current.position.set(ex + dirX * offset, ey + 0.25, ez + dirZ * offset)
-      // Point the gun in the direction of the player
-      gunRef.current.lookAt(px, ey + 0.25, pz)
-    }
-  })
-
   // Spring for projectile opacity
   const [projSpring, projApi] = useSpring(() => ({ opacity: 1, config: { tension: 180, friction: 24 } }))
 
@@ -199,9 +168,8 @@ export function ShooterEnemy(props) {
           <animated.meshStandardMaterial color={colorSpring.color} emissive={colorSpring.emissive} emissiveIntensity={colorSpring.emissiveIntensity} transparent opacity={spring.opacity} metalness={0.2} roughness={0.4} />
         </mesh>
       </animated.group>
-      {/* Projectile orb visually under the enemy, collides with floor only, not parented */}
+
       <animated.mesh uuid={`enemy-projectile-${props.uuid}`} ref={projectileRef} castShadow receiveShadow>
-        {/* <sphereGeometry args={[0.25, 16, 16]} /> */}
         <octahedronGeometry args={[PROJECTILE_SIZE, 0]} />
         <animated.meshStandardMaterial 
           color={isPoweredUpDestroyer() ? 'white' : color} 
@@ -211,11 +179,7 @@ export function ShooterEnemy(props) {
           opacity={projSpring.opacity} 
         />
       </animated.mesh>
-      {/* Gun visual: offset in the direction of the player */}
-      {/* <mesh ref={gunRef}>
-        <cylinderGeometry args={[0.07, 0.07, 0.3, 12]} />
-        <meshStandardMaterial color={'#fff'} emissive={'#ff00ea'} emissiveIntensity={2} />
-      </mesh> */}
+
     </>
   )
 } 

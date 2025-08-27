@@ -1,5 +1,5 @@
 import create from 'zustand'
-import { randomColor, randomDarkColor, randomNeonColor, randomPastelColor, randomWhiteYellowColor, randomBluishColor, randomReddishColor } from './utils'
+import { randomDarkColor,  randomWhiteYellowColor, randomBluishColor, randomReddishColor } from './utils'
 import { getRandomPowerupType } from './constants'
 
 // Generate a random color palette with custom generator

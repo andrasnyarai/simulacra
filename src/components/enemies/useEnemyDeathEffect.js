@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { useSpring } from '@react-spring/three'
-import { runExplosionSpring } from '../utils'
+import { runExplosionSpring } from '../../utils'
 
 export function useEnemyDeathEffect(destroyed, color, api, deathFlashColor) {
   const prevDestroyed = useRef(false)
